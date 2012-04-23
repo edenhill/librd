@@ -4,7 +4,7 @@ TESTS ?= 0*.c
 CFLAGS += -g
 CFLAGS += -Wall -Werror -O2 -I../
 LDFLAGS += -L../ -lrd
-#LDFLAGS += -lpthread -lrt
+LDFLAGS += -lpthread -lrt
 
 all: tests
 
@@ -17,7 +17,7 @@ tests:
 	@(for t in $(TESTS); do \
 		BIN=`echo $$t | sed 's/\.c$$//'`.test ; \
 		LIBS=`grep '^//LIBS=' $$t| sed -e 's/^\/\/LIBS=//'` ; \
-		if ! $(CC) $(CFLAGS) $(LDFLAGS) $$t -o $$BIN $$LIBS ; then \
+		if ! $(CC) $(CFLAGS) $$t -o $$BIN $(LDFLAGS) $$LIBS ; then \
 			echo "Test $$t did not compile" ; \
 			continue ; \
 		fi ; \
