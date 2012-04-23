@@ -29,4 +29,13 @@
 #pragma once
 
 
+/**
+ * Behaves pretty much like basename(3) but does not alter the
+ * input string in any way.
+ */
 const char *rd_basename (const char *path);
+
+/**
+ * Returns the current directory in a static buffer.
+ */
+const char *rd_pwd (void);

@@ -29,6 +29,8 @@
 #include "rd.h"
 #include "rdfile.h"
 
+#include <unistd.h>
+#include <limits.h>
 
 const char *rd_basename (const char *path) {
 	const char *t = path;
@@ -38,4 +40,14 @@ const char *rd_basename (const char *path) {
 		t2 = ++t;
 
 	return t2;
+}
+
+
+const char *rd_pwd (void) {
+	static __thread char path[PATH_MAX];
+
+	if (!getcwd(path, sizeof(path)-1))
+		return NULL;
+
+	return path;
 }
