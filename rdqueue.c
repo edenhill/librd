@@ -110,7 +110,7 @@ void rd_fifoq_add0 (rd_fifoq_t *rfq, void *ptr, void **ptr_purged) {
 
 
 
-rd_fifoq_elm_t *rd_fifoq_pop0 (rd_fifoq_t *rfq, int nowait) {
+rd_fifoq_elm_t *rd_fifoq_pop0 (rd_fifoq_t *rfq, int nowait, int timeout_ms) {
 	rd_fifoq_elm_t *rfqe;
 
 	/* Pop the next valid element from the FIFO. */
@@ -123,7 +123,16 @@ rd_fifoq_elm_t *rd_fifoq_pop0 (rd_fifoq_t *rfq, int nowait) {
 				return NULL;
 			}
 
-			rd_cond_wait(&rfq->rfq_cond, &rfq->rfq_lock);
+			if (timeout_ms) {
+				if (rd_cond_timedwait_ms(&rfq->rfq_cond,
+							 &rfq->rfq_lock,
+							 timeout_ms)
+				    == ETIMEDOUT) {
+					rd_mutex_unlock(&rfq->rfq_lock);
+					return NULL;
+				}
+			} else
+				rd_cond_wait(&rfq->rfq_cond, &rfq->rfq_lock);
 		}
 
 		assert(rfq->rfq_cnt > 0);

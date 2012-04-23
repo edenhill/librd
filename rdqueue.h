@@ -94,9 +94,10 @@ void rd_fifoq_add0 (rd_fifoq_t *rfq, void *ptr, void **ptr_purged);
 #define rd_fifoq_add_purge(rfq,ptr,ptr_purged) \
 	rd_fifoq_add0(rfq,ptr,(void **)ptr_purged)
 
-rd_fifoq_elm_t *rd_fifoq_pop0 (rd_fifoq_t *rfq, int no_wait);
-#define rd_fifoq_pop_wait(rfq) rd_fifoq_pop0(rfq, 0)
-#define rd_fifoq_pop(rfq) rd_fifoq_pop0(rfq, 1)
+rd_fifoq_elm_t *rd_fifoq_pop0 (rd_fifoq_t *rfq, int no_wait, int timeout_ms);
+#define rd_fifoq_pop_wait(rfq) rd_fifoq_pop0(rfq, 0, 0)
+#define rd_fifoq_pop_timedwait(rfq,tmo) rd_fifoq_pop0(rfq, 0, tmo)
+#define rd_fifoq_pop(rfq) rd_fifoq_pop0(rfq, 1, 0)
 
 static inline void rd_fifoq_elm_release0 (rd_fifoq_t *rfq,
 					  rd_fifoq_elm_t *rfqe) {

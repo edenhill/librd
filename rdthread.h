@@ -151,7 +151,10 @@ static int rd_cond_timedwait_ms (rd_cond_t *cond,
 
 
 
-int rd_thread_poll (void);
+#define RD_POLL_INFINITE  0
+#define RD_POLL_NOWAIT   -1
+
+int rd_thread_poll (int timeout_ms);
 void rd_thread_dispatch (void);
 
 void rd_thread_init (void);

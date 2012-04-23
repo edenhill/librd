@@ -49,11 +49,13 @@ void rd_thread_init (void) {
 	rd_currthread = rd_mainthread;
 }
 
-int rd_thread_poll (void) {
+int rd_thread_poll (int timeout_ms) {
 	rd_fifoq_elm_t *rfqe;
 	int cnt = 0;
+	int nowait = timeout_ms == -1;
 
-	while ((rfqe = rd_fifoq_pop(&rd_currthread->rdt_eventq))) {
+	while ((rfqe = rd_fifoq_pop0(&rd_currthread->rdt_eventq,
+				     nowait, timeout_ms))) {
 		rd_thread_event_t *rte = rfqe->rfqe_ptr;
 		
 		rd_thread_event_call(rte);
@@ -69,10 +71,8 @@ int rd_thread_poll (void) {
 void rd_thread_dispatch (void) {
 
 	while (rd_currthread->rdt_state == RD_THREAD_S_RUNNING) {
-		if (rd_thread_poll() == 0) {
-			/* FIXME: Proper conding for all thread inputs. */
-			usleep(50000);
-		}
+		/* FIXME: Proper conding for all thread inputs. */
+		rd_thread_poll(100);
 	}
 }
 
