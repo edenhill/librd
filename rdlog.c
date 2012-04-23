@@ -85,7 +85,7 @@ void rdputs0 (const char *file, const char *func, int line,
 	char buf[4096];
 	int of = 0;
 	int i;
-	int r;
+	int r RD_UNUSED;
 	rd_ts_t now;
 
 	if (!rd_dbg_on)
