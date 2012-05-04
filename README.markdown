@@ -90,5 +90,7 @@ Scattered lists of things to do:
 - Configuration/.rc file support using the rd_opt_t framework allowing
    the same configuration token to be specified both as command line
    argument and configuration file without any extra development effort.
+- rdmkbuildtree.sh - script to generate makefiles at the start of a project,
+  debian directories, etc.
 - Add anything else that may come in handy for more than one program ever.
 
