@@ -70,7 +70,7 @@ static int bitvec_tests (void) {
 #define FAIL(fmt...) do {						\
 		printf("%s:%i: "					\
 		       "bitvec test #%i FAILED: "			\
-		       "series[%i] = %llu (expect=%s): ",		\
+		       "series[%i] = %" PRIu64 " (expect=%s): ",	\
 		       __FUNCTION__,__LINE__,				\
 		       i, j, t[i].series[j].val,			\
 		       expectstr[t[i].series[j].expect]);		\
@@ -144,14 +144,14 @@ static int bitvec_tests (void) {
 	rd_bitvec_set(&rbv, 288);
 
 	if ((bit = rd_bitvec_ffs(&rbv)) != 18)
-		FAIL("ffs returned %llu, should've been 18", bit);
+		FAIL("ffs returned %" PRIu64 ", should've been 18", bit);
 	if ((bit = rd_bitvec_fls(&rbv)) != 289)
-		FAIL("fls returned %llu, should've been 289", bit);
+		FAIL("fls returned %" PRIu64 ", should've been 289", bit);
 	
 	rd_bitvec_set(&rbv, 300);
 
 	if ((bit = rd_bitvec_fls(&rbv)) != 301)
-		FAIL("fls returned %llu, should've been 301", bit);
+		FAIL("fls returned %" PRIu64 ", should've been 301", bit);
 
 	rd_bitvec_free(&rbv);
 

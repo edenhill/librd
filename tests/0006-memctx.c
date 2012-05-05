@@ -62,7 +62,7 @@ static int test_memctxs (void) {
 	}
 
 	if (stats.bytes_out != sum) {
-		printf("%s:%i: failed: stats.bytes_out %i != real.sum %i\n",
+		printf("%s:%i: failed: stats.bytes_out %zd != real.sum %i\n",
 		       __FUNCTION__,__LINE__,
 		       stats.bytes_out, sum);
 		fails++;
@@ -85,7 +85,7 @@ static int test_memctxs (void) {
 	}
 
 	if (stats.bytes_out != 0) {
-		printf("%s:%i: failed: stats.bytes_out %i != 0\n",
+		printf("%s:%i: failed: stats.bytes_out %zd != 0\n",
 		       __FUNCTION__,__LINE__,
 		       stats.bytes_out);
 		fails++;
@@ -121,7 +121,7 @@ static int test_memctxs (void) {
 	}
 
 	if (stats.bytes_out != sum) {
-		printf("%s:%i: failed: stats.bytes_out %i != real.sum %i\n",
+		printf("%s:%i: failed: stats.bytes_out %zd != real.sum %i\n",
 		       __FUNCTION__,__LINE__,
 		       stats.bytes_out, sum);
 		fails++;
@@ -140,7 +140,7 @@ static int test_memctxs (void) {
 	}
 
 	if (stats.bytes_out != 0) {
-		printf("%s:%i: failed: stats.bytes_out %i != 0\n",
+		printf("%s:%i: failed: stats.bytes_out %zd != 0\n",
 		       __FUNCTION__,__LINE__,
 		       stats.bytes_out);
 		fails++;

@@ -57,7 +57,8 @@ static int size2str_tests (void) {
 		t = rd_size2str(in[i].val, in[i].si, "B");
 		if (strcmp(t, in[i].exp)) {
 			printf("rd_size2str() test #%i failed: "
-			       "val %llu, si=%i expected '%s', but got '%s'\n",
+			       "val %" PRIu64 ", si=%i expected '%s', "
+			       "but got '%s'\n",
 			       i, in[i].val, in[i].si, in[i].exp, t);
 			fails++;
 		}

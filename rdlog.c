@@ -93,7 +93,8 @@ void rdputs0 (const char *file, const char *func, int line,
 
 	now = rd_clock();
 	
-	of += snprintf(buf+of, sizeof(buf)-of, "|%llu.%03llu|%s:%i|%s| ",
+	of += snprintf(buf+of, sizeof(buf)-of, "|%" PRIu64 ".%03" PRIu64
+		       "|%s:%i|%s| ",
 		       now / 1000,
 		       now % 1000,
 		       func, line,

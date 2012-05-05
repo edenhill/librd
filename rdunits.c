@@ -88,13 +88,13 @@ const char *rd_size2str (uint64_t size, int si, const char *unitsuffix) {
 	/* Display according to size-abbreviation and precision */
 	if (size < sizes[si][i].val || sizes[si][i].val == 0)
 		snprintf(ret[reti], sizeof(ret[reti]),
-			 "%llu%s%s",
+			 "%" PRIu64 "%s%s",
 			 size,
 			 sizes[si][i].suffix, unitsuffix ? : "");
 	else if (!(sub = size % sizes[si][i].val) ||
 		 (float)sub / (float)sizes[si][i].val < 0.01)
 		snprintf(ret[reti], sizeof(ret[reti]),
-			 "%llu%s%s",
+			 "%" PRIu64 "%s%s",
 			 sizes[si][i].val ? size / sizes[si][i].val : size,
 			 sizes[si][i].suffix, unitsuffix ? : "");
 
