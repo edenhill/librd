@@ -16,7 +16,8 @@ tests:
 	@echo "-----------------------------------------------------"
 	@(for t in $(TESTS); do \
 		BIN=`echo $$t | sed 's/\.c$$//'`.test ; \
-		if ! $(CC) $(CFLAGS) $(LDFLAGS) $$t -o $$BIN ; then \
+		LIBS=`grep '^//LIBS=' $$t| sed -e 's/^\/\/LIBS=//'` ; \
+		if ! $(CC) $(CFLAGS) $(LDFLAGS) $$t -o $$BIN $$LIBS ; then \
 			echo "Test $$t did not compile" ; \
 			continue ; \
 		fi ; \
