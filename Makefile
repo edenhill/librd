@@ -14,7 +14,7 @@ HDRS=	rdbits.h rdevent.h rdfloat.h rd.h rdsysqueue.h rdqueue.h \
 
 OBJS=	$(SRCS:.c=.o)
 
-CFLAGS+=-O2 -Wall -Werror -fPIC
+CFLAGS+=-O2 -Wall -Werror -Wfloat-equal -fPIC
 CFLAGS+=-g
 
 LDFLAGS+=-shared -g -fPIC -lpthread -lrt -lc
