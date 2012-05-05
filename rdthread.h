@@ -105,9 +105,9 @@ static inline rd_thread_t *rd_currthread_get (void) {
 #define rd_mutex_unlock(MTX)  pthread_mutex_unlock(MTX)
 
 #define RD_MUTEX_LOCKED(MTX,CODE...) do {	\
-	rd_mutex_lock(RWL);			\
+	rd_mutex_lock(MTX);			\
 	CODE;					\
-	rd_mutex_unlock(RWL);			\
+	rd_mutex_unlock(MTX);			\
 	} while (0)
 
 #define rd_rwlock_init(RWL)    pthread_rwlock_init(RWL,NULL)
