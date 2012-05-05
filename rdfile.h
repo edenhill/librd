@@ -28,6 +28,12 @@
 
 #pragma once
 
+#include <unistd.h>
+#include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 /**
  * Behaves pretty much like basename(3) but does not alter the
@@ -39,3 +45,22 @@ const char *rd_basename (const char *path);
  * Returns the current directory in a static buffer.
  */
 const char *rd_pwd (void);
+
+
+/**
+ * Returns the size of the file, or -1 on failure.
+ */
+ssize_t rd_file_size (const char *path);
+
+/**
+ * Returns the size of the file already opened, or -1 on failure.
+ */
+ssize_t rd_file_size_fd (int fd);
+
+/**
+ * Opens the specified file and reads the entire content into a malloced
+ * buffer which is null-terminated. The actual length of the buffer, without
+ * the conveniant null-terminator, is returned in '*lenp'.
+ * The buffer is returned, or NULL on failure.
+ */
+char *rd_file_read (const char *path, int *lenp);

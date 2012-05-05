@@ -29,8 +29,6 @@
 #include "rd.h"
 #include "rdfile.h"
 
-#include <unistd.h>
-#include <limits.h>
 
 const char *rd_basename (const char *path) {
 	const char *t = path;
@@ -50,4 +48,62 @@ const char *rd_pwd (void) {
 		return NULL;
 
 	return path;
+}
+
+
+ssize_t rd_file_size (const char *path) {
+	struct stat st;
+	
+	if (stat(path, &st) == -1)
+		return (ssize_t)-1;
+
+	return st.st_size;
+}
+
+ssize_t rd_file_size_fd (int fd) {
+	struct stat st;
+
+	if (fstat(fd, &st) == -1)
+		return (ssize_t)-1;
+
+	return st.st_size;
+}
+
+
+/**
+ * Opens the specified file and reads the entire content into a malloced
+ * buffer which is null-terminated. The actual length of the buffer, without
+ * the conveniant null-terminator, is returned in '*lenp'.
+ */
+char *rd_file_read (const char *path, int *lenp) {
+	char *buf;
+	int fd;
+	ssize_t size;
+	int r;
+
+	if ((fd = open(path, O_RDONLY)) == -1)
+		return NULL;
+
+	if ((size = rd_file_size_fd(fd)) == -1) {
+		close(fd);
+		return NULL;
+	}
+
+	if (!(buf = malloc(size+1))) {
+		close(fd);
+		return NULL;
+	}
+
+	if ((r = read(fd, buf, size)) == -1) {
+		close(fd);
+		free(buf);
+		return NULL;
+	}
+
+	buf[r] = '\0';
+	
+	if (lenp)
+		*lenp = r;
+
+	return buf;
 }
