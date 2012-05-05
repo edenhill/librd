@@ -81,7 +81,7 @@ static void rd_timer_init (rd_timer_t *rt, rd_timer_type_t type,
 	memset(rt, 0, sizeof(*rt));
 
 	rt->rt_type = type;
-	rt->rt_thread = rdt ? : rd_currthread;
+	rt->rt_thread = rdt ? : rd_currthread_get();
 	rt->rt_rte.rte_callback = callback;
 	rt->rt_rte.rte_ptr = ptr;
 }

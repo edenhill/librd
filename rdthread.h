@@ -65,10 +65,13 @@ extern __thread rd_thread_t *rd_currthread;
  * Slow controlled thread exit through rd_thread_dispatch().
  */
 #define rd_thread_exit() do {					  \
+	rd_currthread_get();				          \
 	assert(rd_currthread->rdt_state == RD_THREAD_S_RUNNING || \
 	       rd_currthread->rdt_state == RD_THREAD_S_EXITING);  \
 	(rd_currthread->rdt_state = RD_THREAD_S_EXITING);	  \
 	} while (0)
+
+rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread);
 
 rd_thread_t *rd_thread_create (const char *name,
 			       const pthread_attr_t *attr,
@@ -79,6 +82,19 @@ int rd_threads_create (const char *nameprefix, int threadcount,
 		       const pthread_attr_t *attr,
 		       void *(*start_routine)(void*),
 		       void *arg);
+
+
+static inline rd_thread_t *rd_currthread_get (void) RD_UNUSED;
+static inline rd_thread_t *rd_currthread_get (void) {
+
+	if (unlikely(!rd_currthread)) {
+		pthread_t thr = pthread_self();
+		rd_currthread = rd_thread_create0("non-rd", &thr);
+	}
+
+	return rd_currthread;
+}
+
 
 
 #define RD_MUTEX_INITIALIZER  PTHREAD_MUTEX_INITIALIZER

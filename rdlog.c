@@ -96,7 +96,8 @@ void rdputs0 (const char *file, const char *func, int line,
 	of += snprintf(buf+of, sizeof(buf)-of, "|%llu.%03llu|%s:%i|%s| ",
 		       now / 1000,
 		       now % 1000,
-		       func, line, rd_currthread->rdt_name);
+		       func, line,
+		       rd_currthread ? rd_currthread->rdt_name : "non-rd");
 
 	if (rd_dbg_ctx_idx > 0) {
 		for (i = 0 ; i < rd_dbg_ctx_idx ; i++)

@@ -90,10 +90,8 @@ static void *rd_thread_start_routine (void *arg) {
 	return ret;
 }
 
-rd_thread_t *rd_thread_create (const char *name,
-			       const pthread_attr_t *attr,
-			       void *(*start_routine)(void*),
-			       void *arg) {
+
+rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread) {
 	rd_thread_t *rdt;
 
 	rdt = calloc(1, sizeof(*rdt));
@@ -102,6 +100,21 @@ rd_thread_t *rd_thread_create (const char *name,
 		rdt->rdt_name = strdup(name);
 
 	rdt->rdt_state = RD_THREAD_S_RUNNING;
+
+	if (pthread)
+		rdt->rdt_thread = *pthread;
+
+	return rdt;
+}
+
+
+rd_thread_t *rd_thread_create (const char *name,
+			       const pthread_attr_t *attr,
+			       void *(*start_routine)(void*),
+			       void *arg) {
+	rd_thread_t *rdt;
+
+	rdt = rd_thread_create0(name, NULL);
 
 	rdt->rdt_start = start_routine;
 	rdt->rdt_start_arg = arg;
