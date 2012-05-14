@@ -124,3 +124,24 @@ void  rd_memctx_free0 (rd_memctx_t *rmc, void *ptr, size_t size);
 size_t rd_memctx_freeall (rd_memctx_t *rmc);
 
 #define rd_memctx_name(rmc) ((rmc)->rmc_name)
+
+
+
+
+
+
+
+
+/**
+ * Allocate and copy memory from src to dst
+ */
+static void *rd_memdup (const void *src, size_t len) RD_UNUSED;
+static void *rd_memdup (const void *src, size_t len) {
+	void *dst;
+
+	dst = malloc(len);
+	if (likely(dst != NULL))
+		memcpy(dst, src, len);
+
+	return dst;
+}
