@@ -59,7 +59,7 @@ typedef struct rd_memctx_s {
 	int          rmc_flags;
 #define RD_MEMCTX_F_TRACK   0x1    /* Track all allocations by maintaining
 				    * a list of them.
-				    * This allows the rd_memctx_freeall()
+				    * This allows the rd_memctx_freeall() call
 				    * but makes rd_memctx_free() slower.
 				    * Typical usage is for operations where
 				    * a bunch of allocations are made
@@ -68,6 +68,7 @@ typedef struct rd_memctx_s {
 #define RD_MEMCTX_F_LOCK    0x2    /* This flag is required for memctx's
 				    * shared by multiple threads to enable 
 				    * mutex locking. */
+#define RD_MEMCTX_F_INITED  0x100  /* Initialized */
 
 	TAILQ_HEAD(, rd_memctx_ptr_s) rmc_ptrs;  /* If _F_TRACK is set:
 						  * Current allocations. */
@@ -86,6 +87,8 @@ typedef struct rd_memctx_s {
 
 void rd_memctx_init (rd_memctx_t *rmc, const char *name, int flags);
 void rd_memctx_destroy (rd_memctx_t *rmc);
+
+#define RD_MEMCTX_INITED(rmc) ((rmc)->rmc_flags & RD_MEMCTX_F_INITED)
 
 typedef struct rd_memctx_stats_s {
 	unsigned int out;

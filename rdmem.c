@@ -54,7 +54,8 @@ void rd_memctx_init (rd_memctx_t *rmc, const char *name, int flags) {
 	rd_mutex_lock(&rd_memctxs_lock);
 	TAILQ_INSERT_TAIL(&rd_memctxs, rmc, rmc_link);
 	rd_mutex_unlock(&rd_memctxs_lock);
-	
+
+	BIT_SET(rmc->rmc_flags, RD_MEMCTX_F_INITED);
 }
 
 void rd_memctx_destroy (rd_memctx_t *rmc) {
