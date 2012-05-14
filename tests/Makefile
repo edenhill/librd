@@ -4,7 +4,7 @@ TESTS ?= 0*.c
 CFLAGS += -g
 CFLAGS += -Wall -Werror -Wfloat-equal -O2 -I../
 LDFLAGS += -L../ -lrd
-LDFLAGS += -lpthread -lrt
+LDFLAGS += -lpthread -lrt -lz
 
 all: tests
 
