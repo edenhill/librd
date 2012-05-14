@@ -44,16 +44,21 @@
 #include "rdtypes.h"
 
 
-
+#ifndef likely
 #define likely(x)   __builtin_expect((x),1)
+#endif
+#ifndef unlikely
 #define unlikely(x) __builtin_expect((x),0)
+#endif
 
 #define RD_UNUSED   __attribute__((unused))
+#define RD_PACKED   __attribute__((packed))
 
 #define RD_ARRAYSIZE(A)           (sizeof((A)) / sizeof(*(A)))
 #define RD_SIZEOF(TYPE,MEMBER)    sizeof(((TYPE *)NULL)->MEMBER)
 #define RD_OFFSETOF(TYPE,MEMBER)  ((size_t) &(((TYPE *)NULL)->MEMBER))
 
+#define RD_STRINGIFY(X)  # X
 
 /**
  * Cap an integer (of any type) to reside within the defined limit.
