@@ -28,6 +28,7 @@
 
 #include <stdarg.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "rd.h"
 #include "rdthread.h"
@@ -118,4 +119,34 @@ void rdputs0 (const char *file, const char *func, int line,
 	buf[of] = '\0';
 
 	r = write(STDOUT_FILENO, buf, of);
+}
+
+
+
+
+
+void rd_hexdump (FILE *fp, const char *name, const void *ptr, size_t len) {
+	const char *p = (const char *)ptr;
+	int of = 0;
+
+
+	if (name)
+		fprintf(fp, "%s hexdump (%lu bytes):\n", name, len);
+
+	for (of = 0 ; of < len ; of += 16) {
+		char hexen[16*3+1];
+		char charen[16+1];
+		int hof = 0;
+
+		int cof = 0;
+		int i;
+
+		for (i = of ; i < of + 16 && i < len ; i++) {
+			hof += sprintf(hexen+hof, "%02x ", p[i] & 0xff);
+			cof += sprintf(charen+cof, "%c",
+				      isprint(p[i]) ? p[i] : '.');
+		}
+		fprintf(fp, "%08x: %-48s %-16s\n",
+			of, hexen, charen);
+	}
 }

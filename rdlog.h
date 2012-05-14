@@ -38,3 +38,6 @@ void rd_dbg_ctx_push (const char *fmt, ...);
 void rd_dbg_ctx_pop (void);
 void rd_dbg_ctx_clear (void);
 void rd_dbg_set (int onoff);
+
+
+void rd_hexdump (FILE *fp, const char *name, const void *ptr, size_t len);
