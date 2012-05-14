@@ -71,6 +71,11 @@ extern __thread rd_thread_t *rd_currthread;
 	(rd_currthread->rdt_state = RD_THREAD_S_EXITING);	  \
 	} while (0)
 
+/**
+ * Clean up / free resources allocated to the current thread.
+ * Use prior to thread destruction.
+ */
+void         rd_thread_cleanup (void);
 rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread);
 
 rd_thread_t *rd_thread_create (const char *name,

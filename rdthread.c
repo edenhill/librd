@@ -68,12 +68,20 @@ int rd_thread_poll (int timeout_ms) {
 	return cnt;
 }
 
+void rd_thread_cleanup (void) {
+	extern void rd_string_thread_cleanup ();
+	rd_string_thread_cleanup();
+}
+
+
 void rd_thread_dispatch (void) {
 
 	while (rd_currthread->rdt_state == RD_THREAD_S_RUNNING) {
 		/* FIXME: Proper conding for all thread inputs. */
 		rd_thread_poll(100);
 	}
+
+	rd_thread_cleanup();
 }
 
 
@@ -86,6 +94,8 @@ static void *rd_thread_start_routine (void *arg) {
 	rdbg("thread started");
 
 	ret = rdt->rdt_start(rdt->rdt_start_arg);
+
+	rd_thread_cleanup();
 
 	return ret;
 }
