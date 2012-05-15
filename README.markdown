@@ -7,8 +7,14 @@ Copyright (c) 2012, [Magnus Edenhill](http://www.edenhill.se/), et.al.
 
 **librd** aims to provide the commonly needed helpers, sub systems, snippets
 and misc. functionality that lacks from the standard C libraries, allowing for
-rapid development of new programs and non-intrusive extension of existing
+rapid development of new programs and **non-intrusive** extension of existing
 applications.
+
+**librd** is **non-intrusive** in the sense that single specific functionality
+from **librd** can be used by the application without having to use or
+initialize other parts of the library. In its most simple form you add
+`-lrd` to your linking step and include the proper `rd<FUNC>.h` include file
+for your desired functionality.
 
 **librd** is licensed under the 2-clause BSD license.
 
@@ -20,7 +26,8 @@ applications.
 - consistent, natural and non-bloated APIs and interfaces
 - scalability and performance
 - proper documentation (some time in the future)
-- suitable both for embedded systems as well as large-scale backend systems
+- suitable both for embedded systems, large-scale backend systems, and
+  GUI applications.
 
 
 # Functionality
@@ -35,12 +42,14 @@ Non-exhaustive list of current **librd** functionality:
 - Short (-c) and long (--config) command line argument option parsing with
   input validation and automatic variable assignments.
 - Float comparison helpers.
+- `AF_INET` and `AF_INET6` agnostification.
 
 # Usage
 
 ## Requirements
 	The GNU toolchain
    	pthreads
+	zlib
 
 ## Instructions
 
