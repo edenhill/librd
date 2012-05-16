@@ -30,6 +30,7 @@
 #include "rdaddr.h"
 #include "rdstring.h"
 #include "rdbits.h"
+#include "rdrand.h"
 
 const char *rd_sockaddr2str (const void *addr, int flags) {
 	const rd_sockaddr_inx_t *a = (const rd_sockaddr_inx_t *)addr;
@@ -184,7 +185,10 @@ rd_sockaddr_list_t *rd_getaddrinfo (const char *nodesvc, const char *defsvc,
 
 	freeaddrinfo(ais);
 
-	/* FIXME: SHUFFLE */
+	/* Shuffle address list for proper round-robin */
+	if (!BIT_TEST(flags, RD_AI_NOSHUFFLE))
+		rd_array_shuffle(rsal->rsal_addr, rsal->rsal_cnt,
+				 sizeof(*rsal->rsal_addr));
 
 	return rsal;
 }
