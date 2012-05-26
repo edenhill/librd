@@ -125,6 +125,20 @@
         (*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
 #endif
 
+
+#ifndef TAILQ_FOREACH_SAFE
+/*
+ * TAILQ_FOREACH_SAFE() provides a traversal where the current iterated element
+ * may be freed or unlinked.
+ * It does not allow freeing or modifying any other element in the list,
+ * at least not the next element.
+ */
+#define TAILQ_FOREACH_SAFE(elm,tmpelm,head,field)			\
+	for ((elm) = TAILQ_FIRST(head) ;				\
+	     (elm) && ((tmpelm) = TAILQ_NEXT((elm), field), 1) ;	\
+	     (elm) = (tmpelm))
+#endif
+
 /* 
  * In Mac OS 10.4 and earlier TAILQ_FOREACH_REVERSE was defined
  * differently, redefined it.
@@ -186,6 +200,7 @@
         }							\
 } while(0)
 
+#ifndef TAILQ_INSERT_SORTED
 #define TAILQ_INSERT_SORTED(head, elm, field, cmpfunc) do {	\
         if(TAILQ_FIRST(head) == NULL) {				\
            TAILQ_INSERT_HEAD(head, elm, field);			\
@@ -203,6 +218,7 @@
            }							\
         }							\
 } while(0)
+#endif
 
 #define TAILQ_MOVE(newhead, oldhead, field) do { \
         if(TAILQ_FIRST(oldhead)) { \
