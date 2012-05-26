@@ -91,8 +91,6 @@ static void *rd_thread_start_routine (void *arg) {
 
 	rd_currthread = rdt;
 
-	rdbg("thread started");
-
 	ret = rdt->rdt_start(rdt->rdt_start_arg);
 
 	rd_thread_cleanup();
