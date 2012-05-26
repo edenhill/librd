@@ -88,18 +88,23 @@ void rdputs0 (const char *file, const char *func, int line,
 	int i;
 	int r RD_UNUSED;
 	rd_ts_t now;
+	static __thread char thrname[16];
 
 	if (!rd_dbg_on)
 		return;
 
 	now = rd_clock();
 	
+	if (unlikely(!rd_currthread && !*thrname))
+		snprintf(thrname, sizeof(thrname), "thr:%x",
+			 (int)pthread_self());
+
 	of += snprintf(buf+of, sizeof(buf)-of, "|%" PRIu64 ".%03" PRIu64
 		       "|%s:%i|%s| ",
 		       now / 1000,
 		       now % 1000,
 		       func, line,
-		       rd_currthread ? rd_currthread->rdt_name : "non-rd");
+		       rd_currthread ? rd_currthread->rdt_name : thrname);
 
 	if (rd_dbg_ctx_idx > 0) {
 		for (i = 0 ; i < rd_dbg_ctx_idx ; i++)
