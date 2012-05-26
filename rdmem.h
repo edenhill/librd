@@ -214,3 +214,14 @@ static void *rd_memdup (const void *src, size_t len) {
 
 	return dst;
 }
+
+
+
+/**
+ * Generic struct to hold a pointer and its length.
+ */
+typedef struct rd_ptrlen_s {
+	char  *ptr;   /* char rather than void here allows byte-sized
+		       * pointer arithmetics, which is handy. */
+	size_t len;
+} rd_ptrlen_t;
