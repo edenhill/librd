@@ -153,10 +153,64 @@ static int test_memctxs (void) {
 }
 
 
+static int test_alloc_struct (void) {
+	struct test {
+		int a;
+		char *b;
+		char *c;
+		int d[16];
+		int *e;
+		int f;
+	} *test;
+	const char *bs = "the b field";
+	const char cs[] = "abcdefghijklmnopqrstuvwxyzåäö0123456789!?";
+	const int es[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+	int fails = 0;
+
+	rd_calloc_struct(&test, sizeof(*test),
+			 -1, "the b field", &test->b,
+			 sizeof(cs), cs, &test->c,
+			 sizeof(es), es, &test->e,
+			 RD_MEM_END_TOKEN);
+
+	if (!test) {
+		printf("%s:%i failed #1: no pointer returned\n",
+		       __FUNCTION__,__LINE__);
+		return 1;
+	}
+
+	if (test->b == NULL ||
+	    strcmp(test->b, bs)) {
+		printf("%s:%i: failed #2: test->b is %s, should be %s;\n",
+		       __FUNCTION__,__LINE__, test->b, bs);
+		fails++;
+	}
+
+
+	if (test->c == NULL ||
+	    strcmp(test->c, cs)) {
+		printf("%s:%i: failed #3: test->c is %s, should be %s;\n",
+		       __FUNCTION__,__LINE__, test->c, cs);
+		fails++;
+	}
+	
+
+	if (test->e == NULL ||
+	    memcmp(test->e, es, sizeof(es))) {
+		printf("%s:%i: failed #4: test->e (%p) doesnt match es;\n",
+		       __FUNCTION__,__LINE__, test->e);
+		fails++;
+	}
+
+	free(test);
+
+	return 0;
+}
 int main (int argc, char **argv) {
 	int fails = 0;
 
 	fails += test_memctxs();
 
+	fails += test_alloc_struct();
 	return fails ? 1 : 0;
 }

@@ -127,6 +127,75 @@ size_t rd_memctx_freeall (rd_memctx_t *rmc);
 
 
 
+#define RD_MEM_END_TOKEN -2
+
+/**
+ * rd_calloc_struct() provides a dynamic struct initializer with only one
+ * single calloc call.
+ *
+ * The key benefits of this is:
+ *   - higher performance thanks to fewer malloc/free calls
+ *     and the possibility that all data of the struct resides
+ *     within one cache line
+ *   - less memory fragmentation
+ *   - simpler cleanup code (one free() call).
+ *
+ *
+ * Allocates memory for a struct of base size `base_size' +
+ * the sum of all memory tuples (length, srcptr, dstptr) following in the
+ * var-args list. The srcptrs are then copied to their new locations
+ * and dstptr is updated to point to the newly allocated memory.
+ *
+ * The tuple memory is fitted to the end of the struct.
+ * If tuple length is -1 then srcptr is assumed to be a null-terminated
+ * string which is automatically strlen():ed.
+ *
+ * The tuple argument list must be terminated with a single RD_MEM_END_TOKEN.
+ *
+ * Example usage:
+ *
+ *   struct mystruct {
+ *       char *name;    (1)
+ *       int   id;
+ *       char  token[6];
+ *       void *data;    (1)
+ *       int   data_len;
+ *       (2)
+ *   }
+ *   ...
+ *   struct mystruct *st;
+ *
+ *   rd_calloc_struct(&st, sizeof(*st),
+ *                    -1, "My name", &st->name,
+ *                    buf->len, buf->ptr, &st->data,
+ *                    RD_MEM_END_TOKEN);
+ *
+ *   st->data_len = buf->len;
+ *   st->....
+ *
+ *
+ *  When done:
+ *     free(st);
+ * 
+ *
+ *  (1) = 'name' and 'data' fields will be allocated space for at (2)
+ *        and the two pointers will be updated to point the (2) data space.
+ *  (2) = space allocated for initialized fields.
+ */
+#define rd_calloc_struct(pptr,base_size,ARGS...) do {			\
+		*(pptr) = NULL;						\
+		*(pptr) = rd_calloc_struct0(NULL, base_size, ARGS);	\
+	} while (0)
+
+/**
+ * rd_calloc_struct() for memctx use.
+ */
+#define rd_memctx_calloc_struct(rmc,pptr,base_size,ARGS...) do {	\
+		*(pptr) = NULL;						\
+		*(pptr) = rd_calloc_struct0(rmc, base_size, ARGS);	\
+	} while (0)
+void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...);
+
 
 
 

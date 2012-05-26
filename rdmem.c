@@ -31,6 +31,8 @@
 #include "rdthread.h"
 #include "rdbits.h"
 
+#include <stdarg.h>
+
 static rd_mutex_t rd_memctxs_lock = RD_MUTEX_INITIALIZER;
 static TAILQ_HEAD(, rd_memctx_s) rd_memctxs =
 	TAILQ_HEAD_INITIALIZER(rd_memctxs);
@@ -202,6 +204,65 @@ size_t rd_memctx_freeall (rd_memctx_t *rmc) {
 	
 	return sum;
 }
+
+
+
+void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...) {
+	va_list ap;
+	size_t tot_size = base_size;
+	int pass;
+	char *tail = NULL;
+	void *ptr = NULL;
+
+	/*
+	 * 1) Pass 1: calculate total memory size.
+	 * 2) Allocate memory 
+	 * 3) Pass 2: copy elements to allocated memory.
+	 * 4) Return
+	 */
+
+	for (pass = 1 ; pass <= 2 ; pass++) {
+		int elem_size;
+		void *elem_src, **elem_dst;
+
+		va_start(ap, base_size);
+		while ((elem_size = va_arg(ap, int)) != RD_MEM_END_TOKEN) {
+			elem_src = va_arg(ap, void *);
+			elem_dst = va_arg(ap, void **);
+
+			if (elem_size == -1) /* String of unknown length. */
+				elem_size = strlen(elem_src) + 1;
+
+			if (pass == 1)
+				tot_size += elem_size;
+			else {
+				elem_dst = ptr + (size_t)(elem_dst);
+				*elem_dst = tail;
+				memcpy(*elem_dst, elem_src, elem_size);
+				tail += elem_size;
+			}
+		}
+		va_end(ap);
+
+		if (pass == 1) {
+			if (rmc)
+				ptr = rd_memctx_alloc(rmc, tot_size,
+						      RD_MEMCTX_CALLOC);
+			else
+				ptr = calloc(1, tot_size);
+
+			tail = ((char *)ptr) + base_size;
+
+			if (tot_size == base_size)
+				break;
+		}
+	}
+
+	return ptr;
+}
+
+
+
 
 
 
