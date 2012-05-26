@@ -54,11 +54,27 @@
 #define RD_UNUSED   __attribute__((unused))
 #define RD_PACKED   __attribute__((packed))
 
-#define RD_ARRAYSIZE(A)           (sizeof((A)) / sizeof(*(A)))
+#define RD_ARRAY_SIZE(A)          (sizeof((A)) / sizeof(*(A)))
+#define RD_ARRAYSIZE(A)           RD_ARRAY_SIZE(A)
 #define RD_SIZEOF(TYPE,MEMBER)    sizeof(((TYPE *)NULL)->MEMBER)
 #define RD_OFFSETOF(TYPE,MEMBER)  ((size_t) &(((TYPE *)NULL)->MEMBER))
 
+/**
+ * Returns the 'I'th array element from static sized array 'A'
+ * or NULL if 'I' is out of range.
+ * 'PFX' is an optional prefix to provide the correct return type.
+ */
+#define RD_ARRAY_ELEM(A,I,PFX...)				\
+	((unsigned int)(I) < RD_ARRAY_SIZE(A) ? PFX (A)[(I)] : NULL)
+
+								  
 #define RD_STRINGIFY(X)  # X
+
+
+
+#define RD_MIN(a,b) ((a) < (b) ? (a) : (b))
+#define RD_MAX(a,b) ((a) > (b) ? (a) : (b))
+
 
 /**
  * Cap an integer (of any type) to reside within the defined limit.
