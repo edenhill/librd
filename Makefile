@@ -15,6 +15,7 @@ HDRS=	rdbits.h rdevent.h rdfloat.h rd.h rdsysqueue.h rdqueue.h \
 	rdgz.h rdrand.h
 
 OBJS=	$(SRCS:.c=.o)
+DEPS=	${OBJS:%.o=%.d}
 
 CFLAGS+=-O2 -Wall -Werror -Wfloat-equal -fPIC -I.
 CFLAGS+=-g
@@ -27,7 +28,7 @@ all: $(LIBNAME) tests
 
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -MD -MP $(CFLAGS) -c $<
 
 $(LIBNAME):	$(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(LIBNAME)
@@ -37,4 +38,6 @@ tests: .PHONY
 
 clean:
 	make -C tests clean
-	rm -f $(OBJS) $(LIBNAME)
+	rm -f $(OBJS) $(DEPS) $(LIBNAME)
+
+-include $(DEPS)
