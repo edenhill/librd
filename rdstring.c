@@ -140,3 +140,101 @@ void rd_string_thread_cleanup (void) {
 		cyc->size = 0;
 	}
 }
+
+
+
+char *rd_strnchrs (const char *s, ssize_t size, const char *delimiters,
+		   int match_eol) {
+	const char *end = s + size;
+	char map[256] = {};
+
+	while (*delimiters) {
+		map[(int)*delimiters] = 1;
+		delimiters++;
+	}
+
+	while ((size == -1 || s < end) && *s) {
+		if (map[(unsigned char)*s])
+			return (char *)s;
+
+		s++;
+	}
+
+	if (match_eol)
+		return (char *)s;
+
+	return NULL;
+}
+
+
+
+
+size_t rd_strnspn_map (const char *s, size_t size,
+		       int accept, const char map[256]) {
+	const char *end = s + size;
+	int cnt = 0;
+
+	while ((size == -1 || s < end) && *s) {
+		if (map[(int)*s] != accept)
+			return cnt;
+		s++;
+		cnt++;
+	}
+
+	return cnt;
+}
+
+size_t rd_strnspn (const char *s, size_t size, const char *accept) {
+	char map[256] = {};
+
+	while (*accept) {
+		map[(int)*accept] = 1;
+		accept++;
+	}
+
+	return rd_strnspn_map(s, size, 1, map);
+}
+
+
+
+size_t rd_strncspn (const char *s, size_t size, const char *reject) {
+	char map[256] = {};
+
+	while (*reject) {
+		map[(int)*reject] = 1;
+		reject++;
+	}
+
+	return rd_strnspn_map(s, size, 0, map);
+}
+
+
+
+ssize_t rd_strndiffpos (const char *s1, size_t size1,
+		       const char *s2, size_t size2) {
+	ssize_t i;
+	size_t minlen = RD_MIN(size1, size2);
+
+	for (i = 0 ; i < minlen ; i++)
+		if (s1[i] != s2[i])
+			return i;
+
+	if (size1 != size2)
+		return minlen;
+
+	return -1;
+}
+
+
+ssize_t rd_strdiffpos (const char *s1, const char *s2) {
+	const char *begin = s1;
+	
+	while (*s1 == *s2) {
+		if (!*s1)
+			return -1;
+		s1++;
+		s2++;
+	}
+
+	return (ssize_t)(s1 - begin);
+}
