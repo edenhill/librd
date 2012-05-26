@@ -54,7 +54,7 @@ static __thread struct {
 static inline struct rdstr_cyclic *rdstr_cyclic_get (struct rdstr_cyclic *cyc,
 						     int size) {
 	
-	if (unlikely(cyc->size)) {
+	if (unlikely(cyc->size == 0)) {
 		/* Not initialized. */
 
 		/* Allocate cyclic buffer array. */
