@@ -18,21 +18,25 @@ tests:
 	@echo "Running tests: "
 	@ls $(TESTS)
 	@echo "-----------------------------------------------------"
-	@(for t in $(TESTS); do \
+	@(FAILS=""; \
+	  (for t in $(TESTS); do \
 		BIN=`echo $$t | sed 's/\.c$$//'`.test ; \
 		LIBS=`grep '^//LIBS=' $$t| sed -e 's/^\/\/LIBS=//'` ; \
 		if ! $(CC) $(CFLAGS) $$t -o $$BIN $(LDFLAGS) $$LIBS ; then \
 			echo "Test $$t did not compile" ; \
+			FAILS="$$FAILS $$t" ; \
 			continue ; \
 		fi ; \
-		(LD_LIBRARY_PATH=../ ./$$BIN && echo "Test $$t passed") || \
-			 (echo "########################################";\
+		echo -n "Test $$t "; \
+		(LD_LIBRARY_PATH=../ ./$$BIN && echo "passed") || \
+			 (echo "failed";\
+			  echo "########################################";\
 			  echo "########################################";\
 			  echo "Test $$t failed";\
 			  echo "########################################";\
-			  echo "########################################");\
-		done \
-	)
+			  echo "########################################";\
+			  FAILS="$$FAILS $$t");\
+	    done) ; echo "Fails: $$FAILS" )
 	@echo "====================== END =========================="
 
 
