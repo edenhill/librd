@@ -20,6 +20,11 @@ DEPS=	${OBJS:%.o=%.d}
 CFLAGS+=-O2 -Wall -Werror -Wfloat-equal -fPIC -I.
 CFLAGS+=-g
 
+# Profiling
+#CFLAGS+=-O0
+#CFLAGS += -pg
+#LDFLAGS += -pg
+
 LDFLAGS+=-shared -g -fPIC -lpthread -lrt -lz -lc
 
 .PHONY:

@@ -6,6 +6,10 @@ CFLAGS += -Wall -Werror -Wfloat-equal -O2 -I../
 LDFLAGS += -L../ -lrd
 LDFLAGS += -lpthread -lrt -lz
 
+# Profiling
+#CFLAGS += -O0 -pg
+#LDFLAGS += -pg
+
 all: tests
 
 
