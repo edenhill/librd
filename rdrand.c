@@ -42,8 +42,9 @@ void rd_array_shuffle (void *base, size_t nmemb, size_t entry_size) {
 		if (unlikely(i == j))
 			continue;
 
-		memcpy(tmp, base + (i*entry_size), entry_size);
-		memcpy(base+(i*entry_size), base+(j*entry_size), entry_size);
-		memcpy(base+(j*entry_size), tmp, entry_size);
+		memcpy(tmp, (char *)base + (i*entry_size), entry_size);
+		memcpy((char *)base+(i*entry_size),
+		       (char *)base+(j*entry_size), entry_size);
+		memcpy((char *)base+(j*entry_size), tmp, entry_size);
 	}
 }

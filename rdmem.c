@@ -236,7 +236,8 @@ void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...) {
 			if (pass == 1)
 				tot_size += elem_size;
 			else {
-				elem_dst = ptr + (size_t)(elem_dst);
+				elem_dst = (void *)((char *)ptr +
+						    (size_t)(elem_dst));
 				*elem_dst = tail;
 				memcpy(*elem_dst, elem_src, elem_size);
 				tail += elem_size;

@@ -18,7 +18,7 @@ HDRS=	rdbits.h rdevent.h rdfloat.h rd.h rdsysqueue.h rdqueue.h \
 OBJS=	$(SRCS:.c=.o)
 DEPS=	${OBJS:%.o=%.d}
 
-CFLAGS+=-O2 -Wall -Werror -Wfloat-equal -fPIC -I.
+CFLAGS+=-O2 -Wall -Werror -Wfloat-equal -Wpointer-arith -fPIC -I.
 CFLAGS+=-g
 
 # Profiling
