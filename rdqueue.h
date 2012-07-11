@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include "rd.h"
+#include "rdtypes.h"
 #include "rdsysqueue.h"
 
 
