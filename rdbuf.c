@@ -221,6 +221,16 @@ rd_buf_t *rd_bufh_append (rd_bufh_t *rbh, void *data, uint32_t len,
 	return rb;
 }
 
+rd_buf_t *rd_bufh_prepend (rd_bufh_t *rbh, void *data, uint32_t len,
+			   int flags) {
+	rd_buf_t *rb;
+
+	rb = rd_buf_new(data, len, flags);
+	rd_bufh_buf_insert(rbh, NULL, rb);
+
+	return rb;
+}
+
 
 
 rd_buf_t *rd_bufh_vsprintf (rd_bufh_t *rbh, const char *format, va_list ap) {
@@ -256,6 +266,64 @@ rd_buf_t *rd_bufh_sprintf (rd_bufh_t *rbh, const char *format, ...) {
 	return rb;
 }
 
+
+
+
+rd_buf_t *rd_buf_vsprintf (const char *format, va_list ap) {
+	int totlen;
+	rd_buf_t *rb;
+	va_list ap2;
+
+	va_copy(ap2, ap);
+
+	/* Calculate needed length */
+	totlen = vsnprintf(NULL, 0, format, ap);
+
+	/* Allocate buffer. */
+	rb = rd_buf_new(NULL, totlen+1, 0);
+
+	/* Format the string to the buffer. */
+	vsnprintf(rb->rb_orig+rb->rb_len, totlen+1, format, ap2);
+	
+	/* NOTE: Without trailing null */
+	rb->rb_len = totlen;
+
+	return rb;
+}
+
+rd_buf_t *rd_buf_sprintf (const char *format, ...) {
+	rd_buf_t *rb;
+	va_list ap;
+
+	va_start(ap, format);
+	rb = rd_buf_vsprintf(format, ap);
+	va_end(ap);
+
+	return rb;
+}
+
+
+/*
+ * Moves all buffers from 'src' to tail of 'dst'.
+ * 'src' will become empty.
+ */
+void rd_bufh_move (rd_bufh_t *dst, rd_bufh_t *src) {
+	rd_buf_t *rb, *next, *tail;
+	
+	tail = TAILQ_LAST(&dst->rbh_bufs, rd_buf_tq_head);
+	next = TAILQ_FIRST(&src->rbh_bufs);
+	while (next) {
+		rb = next;
+		next = TAILQ_NEXT(next, rb_link);
+
+		rd_bufh_buf_insert(dst, tail, rb);
+		tail = rb;
+	}
+
+	/* Reset source bufh */
+	TAILQ_INIT(&src->rbh_bufs);
+	src->rbh_len = 0;
+}
 
 
 

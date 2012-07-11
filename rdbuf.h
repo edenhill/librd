@@ -69,11 +69,6 @@ typedef struct rd_bufh_s {
 	TAILQ_ENTRY(rd_buf_s)   rbh_link;
 	struct rd_buf_tq_head   rbh_bufs;
 	uint32_t   rbh_len;
-	rd_buf_t  *rbh_tail;
-#if 0	/* FIXME: figure this out when we need it */
-	uint32_t   rbh_of;
-	rd_buf_t  *rbh_ofb;
-#endif
 	int        rbh_flags;
 #define RD_BUFH_F_FREE   0x1  /* Free rd_buf_t on destroy */
 	int        rbh_read_size;
@@ -95,11 +90,18 @@ static inline uint32_t rd_bufh_len (const rd_bufh_t *rbh) {
 void rd_bufh_destroy (rd_bufh_t *rbh);
 rd_bufh_t *rd_bufh_new (rd_bufh_t *rbh, int read_size);
 rd_buf_t *rd_bufh_recv (rd_bufh_t *rbh, int s, uint32_t len);
+rd_buf_t *rd_bufh_prepend (rd_bufh_t *rbh, void *data, uint32_t len, int flags);
 rd_buf_t *rd_bufh_append (rd_bufh_t *rbh, void *data, uint32_t len, int flags);
 
 rd_buf_t *rd_bufh_vsprintf (rd_bufh_t *rbh, const char *format, va_list ap);
 rd_buf_t *rd_bufh_sprintf (rd_bufh_t *rbh, const char *format, ...);
+void      rd_bufh_move (rd_bufh_t *dst, rd_bufh_t *src);
 
+rd_buf_t *rd_buf_vsprintf (const char *format, va_list ap);
+rd_buf_t *rd_buf_sprintf  (const char *format, ...);
+
+void rd_bufh_buf_insert (rd_bufh_t *rbh, rd_buf_t *after,
+			 rd_buf_t *rb);
 
 /**
  * The buffer writer callback writes serialized data to the destination,
