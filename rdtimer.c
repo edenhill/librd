@@ -157,7 +157,7 @@ static rd_thread_event_f(rd_timer_call) {
 
 	rd_mutex_lock(&rd_timers_lock);
 
-	rd_atomic_sub(&rt->rt_called, 1);
+	(void)rd_atomic_sub(&rt->rt_called, 1);
 
 	if (rt->rt_flags & RD_TIMER_F_REMOVED && rt->rt_called == 0) {
 		/* If the timer was removed while the callback
@@ -204,7 +204,7 @@ static void *rd_timers_run (void *arg) {
 			 * the callback (and without locks). This prohibits
 			 * some other thread from freeing the timer
 			 * while we're calling the callback. */
-			rd_atomic_add(&rt->rt_called, 1);
+			(void)rd_atomic_add(&rt->rt_called, 1);
 		}
 
 		rd_mutex_unlock(&rd_timers_lock);
