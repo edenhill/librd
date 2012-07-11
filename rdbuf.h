@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <stdarg.h>
 #include "rdqueue.h"
 
 typedef struct rd_buf_s {
