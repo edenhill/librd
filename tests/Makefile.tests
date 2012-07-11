@@ -1,0 +1,40 @@
+
+CC ?= cc
+TEST_PROGS := ${TEST_SRCS:%.c=%.test}
+CFLAGS += -g
+CFLAGS += -Wall -Werror -Wfloat-equal -Wpointer-arith -O2 -I../
+LDFLAGS += -L../ -lrd
+LDFLAGS += -lpthread -lrt -lz
+
+# Profiling
+#CFLAGS += -O0 -pg
+#LDFLAGS += -pg
+
+all: tests
+
+%.test: %.c
+	@(LIBS=`grep '^//LIBS=' $< | sed -e 's/^\/\/LIBS=//'` ; \
+	if ! $(CC) $(CFLAGS) $< -o $@ $(LDFLAGS) $$LIBS ; then \
+		echo "########################################";\
+		echo "########################################";\
+		echo "Test $< did not compile" ; \
+		echo "########################################";\
+		echo "########################################";\
+		false ; \
+	else \
+		echo -n "Test $< "; \
+		(LD_LIBRARY_PATH=../ ./$@ && echo "passed" ; true) || \
+			 (echo "failed";\
+			  echo "########################################";\
+			  echo "########################################";\
+			  echo "Test $< failed";\
+			  echo "########################################";\
+			  echo "########################################";\
+				false); \
+	fi)
+
+
+tests: $(TEST_PROGS)
+
+clean:
+	rm -f $(TEST_PROGS)

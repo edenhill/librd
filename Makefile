@@ -1,7 +1,10 @@
 
-LIBNAME=librd.so
-LIBVER=	0
-LIBVER_FULL=0.0.0
+LIBNAME=librd
+LIBVER=0
+LIBVER_FULL=$(LIBVER).0.0
+
+
+PREFIX?=/usr/local
 
 # Use gcc as ld to avoid __stack_chk_fail_error symbol error.
 LD=gcc
@@ -30,17 +33,33 @@ LDFLAGS+=-shared -g -fPIC -lpthread -lrt -lz -lc
 
 .PHONY:
 
-all: $(LIBNAME) tests
+all: libs testscontinue
 
+libs: $(LIBNAME).so $(LIBNAME).a
 
 %.o: %.c
 	$(CC) -MD -MP $(CFLAGS) -c $<
 
-$(LIBNAME):	$(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o $(LIBNAME)
+$(LIBNAME).so:	$(OBJS)
+	$(LD) -shared -Wl,-soname,$(LIBNAME).so.$(LIBVER) \
+		$(LDFLAGS) $(OBJS) -o $@
+	ln -fs $(LIBNAME).so $(LIBNAME).so.$(LIBVER)
+
+$(LIBNAME).a:	$(OBJS)
+	$(AR) rcs $@ $(OBJS)
+
+testscontinue: .PHONY
+	make -C tests $@
 
 tests: .PHONY
-	make -C tests
+	make -C tests $@
+
+install:
+	install -d $(PREFIX)/include/librd $(PREFIX)/lib
+	install -t $(PREFIX)/include/librd $(HDRS)
+	install -t $(PREFIX)/lib $(LIBNAME).so
+	install -t $(PREFIX)/lib $(LIBNAME).so.$(LIBVER)
+	install -t $(PREFIX)/lib $(LIBNAME).a
 
 clean:
 	make -C tests clean

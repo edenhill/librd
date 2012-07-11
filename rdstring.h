@@ -30,7 +30,7 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <rdmem.h>
+#include "rdmem.h"
 
 #define RD_TSPRINTF_BUFCNT    64  /* Number of simultaneously valid
 				   * thread-local buffers returned by 

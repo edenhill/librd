@@ -26,9 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <rd.h>
-#include <rdbuf.h>
-#include <rdlog.h>
+#include "rd.h"
+#include "rdbuf.h"
+#include "rdlog.h"
 
 static int test_bufs (void) {
 	rd_bufh_t *rbh;

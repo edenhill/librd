@@ -26,8 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <rd.h>
-#include <rdstring.h>
+#include "rd.h"
+#include "rdstring.h"
 
 static int test_string (void) {
 	char *str1 = "1234\n5678";

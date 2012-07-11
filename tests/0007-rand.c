@@ -26,9 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <rd.h>
-#include <rdrand.h>
-#include <rdtime.h>
+#include "rd.h"
+#include "rdrand.h"
+#include "rdtime.h"
 
 
 static int test_shuffle (void) {

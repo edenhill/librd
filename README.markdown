@@ -61,13 +61,24 @@ Non-exhaustive list of current **librd** functionality:
 
 ### Building
 
-      make
-      make install  <-- FIXME, not added
+      make all
+      make install
+      # or to install in another location than /usr/local:
+      PREFIX=/my/prefix make install
 
+### Rigid building
+
+The above procedure continues on test failures, but that might not be
+desirable, so here's how to do make sure the tests pass before installing.
+
+      make libs tests install
+
+
+      
 ### Usage in code
 
-      #include <rd.h>
-      #include <rdFUNCTIONALITY.h>
+      #include <librd/rd.h>
+      #include <librd/rdFUNCTIONALITY.h>
 
       ...
       rd_init();

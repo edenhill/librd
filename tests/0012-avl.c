@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <rdavl.h>
+#include "rdavl.h"
 
 
 struct elm {
