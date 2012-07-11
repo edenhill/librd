@@ -13,8 +13,8 @@ applications.
 **librd** is **non-intrusive** in the sense that single specific functionality
 from **librd** can be used by the application without having to use or
 initialize other parts of the library. In its most simple form you add
-`-lrd` to your linking step and include the proper `rd<FUNC>.h` include file
-for your desired functionality.
+`-lrd -lz -lrt` to your linking step and include the proper `rd<FUNC>.h`
+include file for your desired functionality.
 
 **librd** is licensed under the 2-clause BSD license.
 
@@ -34,15 +34,21 @@ for your desired functionality.
 
 Non-exhaustive list of current **librd** functionality:
 
-- Thread-safe FIFO queues (nice for worker queues).
-- Thread management abstraction.
-- Memory contexts for contextual malloc's allowing memory usage supervision
-  and free-all-context-memory-at-once.
-- Improved sys/queue.h.
-- Short (-c) and long (--config) command line argument option parsing with
-  input validation and automatic variable assignments.
-- Float comparison helpers.
-- `AF_INET` and `AF_INET6` agnostification.
+- `rdqueue.h`: Thread-safe FIFO queues (nice for worker queues).
+- `rdthread.h`: Thread management abstraction.
+- `rdmem.h`: Memory contexts for contextual malloc's allowing memory
+     usage supervision and free-all-context-memory-at-once.
+- `rdmem.h`: Efficient memory and allocation helpers: `rd_calloc_
+- `rdsysqueue.h`: Improved sys/queue.h
+- `rdopt.h`: Short (-c) and long (--config) command line argument option
+    parsing with input validation and automatic variable assignments.
+- `rdfloat.h`: Float comparison helpers.
+- `rdaddr.h`: `AF_INET` and `AF_INET6` agnostification.
+- `rdbuf.h`: Generic buffers with (de)serializer/writer/reader callbacks.
+- `rdstring.h`: String helpers: `rd_strnchrs()`.
+- `rd.h`: Convenience macros and porting alleviation:
+   `RD_CAP*(), RD_ARRAY_SIZE(), RD_ARRAY_ELEM(), RD_MIN(), RD_MAX()`.
+- `rdavl.h`: Thread-safe AVL trees.
 
 # Usage
 
@@ -69,9 +75,13 @@ Non-exhaustive list of current **librd** functionality:
 
       rd_....();
 
-Link your program with `-lrd`.
+Link your program with `-lrd -lz -lrt`.
 
 
+## Documentation
+
+Documentation is still lacking, but each function and concept is described
+in its `.h` header file.
 
 
 ## Examples
