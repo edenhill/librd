@@ -60,7 +60,7 @@ static int test_shuffle (void) {
 		int stats3map[6] = { 123, 213, 231, 321, 312, 132 };
 		const int cnt3 = 500000;
 		const int avg3 = cnt3 / 6;
-		const int maxdev3 = avg3 / 100; /* max 1% deviation from avg */
+		const int maxdev3 = avg3 / 80; /* max deviation from avg */
 
 		while (i++ < cnt3) {
 			char arr3[3] = {1, 2, 3};
