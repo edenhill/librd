@@ -97,12 +97,6 @@ typedef struct rd_avl_s {
 
 
 /**
- * Remove element from AVL tree.
- */
-#define RD_AVL_REMOVE(ravl,elm,field)		\
-	rd_avl_remove_node(ravl, &(elm)->field)
-
-/**
  * Remove element by matching value 'elm' using compare function.
  */
 #define RD_AVL_REMOVE_ELM(ravl,elm)	\
@@ -222,18 +216,8 @@ static void *rd_avl_insert (rd_avl_t *ravl, void *elm,
 	return existing ? existing->ran_elm : NULL;
 }
 
-rd_avl_node_t *rd_avl_remove_node0 (rd_avl_node_t *ran);
 rd_avl_node_t *rd_avl_remove_elm0 (rd_avl_t *ravl, rd_avl_node_t *parent,
 				   const void *elm);
-
-static inline void rd_avl_remove_node (rd_avl_t *ravl,
-				       rd_avl_node_t *ran) RD_UNUSED;
-static inline void rd_avl_remove_node (rd_avl_t *ravl,
-				       rd_avl_node_t *ran) {
-	rd_avl_wrlock(ravl);
-	rd_avl_remove_node0(ran);
-	rd_avl_unlock(ravl);
-}
 
 static inline void rd_avl_remove_elm (rd_avl_t *ravl,
 				      const void *elm) RD_UNUSED;

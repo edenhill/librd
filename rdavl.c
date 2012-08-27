@@ -135,7 +135,7 @@ static rd_avl_node_t *rd_avl_move (rd_avl_node_t *dst, rd_avl_node_t *src,
 	return rd_avl_balance_node(dst);
 }
 
-rd_avl_node_t *rd_avl_remove_node0 (rd_avl_node_t *ran) {
+static rd_avl_node_t *rd_avl_remove_node0 (rd_avl_node_t *ran) {
 	rd_avl_node_t *tmp;
 
 	tmp = rd_avl_move(ran->ran_p[RD_AVL_LEFT],
