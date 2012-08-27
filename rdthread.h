@@ -101,6 +101,9 @@ static inline rd_thread_t *rd_currthread_get (void) {
 }
 
 
+#define rd_assert_inthread(rdt)      assert(rd_currthread == (rdt))
+#define rd_assert_inpthread(pthread) assert(pthread_self() == (pthread))
+
 
 #define RD_MUTEX_INITIALIZER  PTHREAD_MUTEX_INITIALIZER
 
