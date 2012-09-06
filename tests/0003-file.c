@@ -29,24 +29,61 @@
 #include "rd.h"
 #include "rdfile.h"
 
+#include "rdtests.h"
+
+static int test_read_write (void) {
+	TEST_VARS;
+	const char *path = "__tmp_test_0003";
+	int r;
+	char buf[] =
+		"Line1 is 22 bytes long\n"
+		"Line2 is just 16\n";
+	int blen = strlen(buf);
+	int len;
+	char *tmp;
+
+	r = rd_file_write(path, buf, blen, O_TRUNC, 0600);
+	if (r == -1) {
+		unlink(path);
+		TEST_FAIL_RETURN("file write: %s", strerror(errno));
+	}
+
+	tmp = rd_file_read(path, &len);
+	if (!tmp) {
+		unlink(path);
+		TEST_FAIL_RETURN("file read: %s", strerror(errno));
+	}
+
+	if (len != blen)
+		TEST_FAIL("file read: written len %i != read len %i",
+			  blen, len);
+
+	free(tmp);
+
+	unlink(path);
+
+	TEST_RETURN;
+}
+
 
 int main (int argc, char **argv) {
+	TEST_VARS;
 	const char *path1 = "/abra/cadabra/bot";
 	const char *name1 = "bot";
 	const char *path2 = "/abra/camambra/bark/";
 	const char *name2 = "";
 	const char *path3 = "/";
 	const char *name3 = "";
-	int fails = 0;
 
 	rd_init();
 
 	fails += strcmp(rd_basename(path1), name1);
 	fails += strcmp(rd_basename(path2), name2);
 	fails += strcmp(rd_basename(path3), name3);
-
 	if (fails)
-		exit(1);
+		TEST_FAIL("rd_basename tests failed");
 
-	exit(0);
+	fails += test_read_write();
+
+	TEST_EXIT;
 }

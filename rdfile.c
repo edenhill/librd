@@ -70,11 +70,16 @@ ssize_t rd_file_size_fd (int fd) {
 }
 
 
-/**
- * Opens the specified file and reads the entire content into a malloced
- * buffer which is null-terminated. The actual length of the buffer, without
- * the conveniant null-terminator, is returned in '*lenp'.
- */
+mode_t rd_file_mode (const char *path) {
+	struct stat st;
+
+	if (stat(path, &st) == -1)
+		return 0;
+
+	return st.st_mode;
+}
+
+
 char *rd_file_read (const char *path, int *lenp) {
 	char *buf;
 	int fd;
@@ -106,4 +111,29 @@ char *rd_file_read (const char *path, int *lenp) {
 		*lenp = r;
 
 	return buf;
+}
+
+
+
+int rd_file_write (const char *path, const char *buf, int len,
+		   int flags, mode_t mode) {
+	int fd;
+	int r;
+	int of = 0;
+
+	if ((fd = open(path, O_CREAT|O_WRONLY|flags, mode)) == -1)
+		return -1;
+
+	while (of < len) {
+		if ((r = write(fd, buf+of, RD_MIN(16384, len - of))) == -1) {
+			close(fd);
+			return -1;
+		}
+
+		of += r;
+	}
+
+	close(fd);
+
+	return 0;
 }

@@ -57,6 +57,18 @@ ssize_t rd_file_size (const char *path);
  */
 ssize_t rd_file_size_fd (int fd);
 
+
+/**
+ * Performs stat(2) on 'path' and returns 'struct stat.st_mode' on success
+ * or 0 on failure.
+ *
+ * Example usage:
+ *  if (S_ISDIR(rd_file_mode(mypath)))
+ *     ..
+ */
+mode_t rd_file_mode (const char *path);
+
+
 /**
  * Opens the specified file and reads the entire content into a malloced
  * buffer which is null-terminated. The actual length of the buffer, without
@@ -64,3 +76,13 @@ ssize_t rd_file_size_fd (int fd);
  * The buffer is returned, or NULL on failure.
  */
 char *rd_file_read (const char *path, int *lenp);
+
+
+/**
+ * Writes 'buf' of 'len' bytes to 'path'.
+ * Hint: Use O_APPEND or O_TRUNC in 'flags'.
+ * Returns 0 on success or -1 on error.
+ * See open(2) for more info.
+ */
+int rd_file_write (const char *path, const char *buf, int len,
+		   int flags, mode_t mode);
