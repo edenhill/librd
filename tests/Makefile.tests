@@ -23,7 +23,7 @@ all: tests
 		false ; \
 	else \
 		echo -n "Test $< "; \
-		(LD_LIBRARY_PATH=../ ./$@ && echo "passed" ; true) || \
+		(LD_LIBRARY_PATH=../ ./$@ && echo "passed") || \
 			 (echo "failed";\
 			  echo "########################################";\
 			  echo "########################################";\
