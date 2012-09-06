@@ -26,8 +26,8 @@ include file for your desired functionality.
 - consistent, natural and non-bloated APIs and interfaces
 - scalability and performance
 - proper documentation (some time in the future)
-- suitable both for embedded systems, large-scale backend systems, and
-  GUI applications.
+- suitable for embedded systems, large-scale backend systems, GUI applications,
+  etc.
 
 
 # Functionality
@@ -49,6 +49,10 @@ Non-exhaustive list of current **librd** functionality:
 - `rd.h`: Convenience macros and porting alleviation:
    `RD_CAP*(), RD_ARRAY_SIZE(), RD_ARRAY_ELEM(), RD_MIN(), RD_MAX()`.
 - `rdavl.h`: Thread-safe AVL trees.
+- `rdio.h`: Socket/fd IO abstraction and helpers.
+- `rdfile.h`: File/filesystem access helpers.
+- `rdencoding.h`: Various encoder and decoder helpers (varint).
+
 
 # Usage
 
@@ -91,14 +95,23 @@ Link your program with `-lrd -lz -lrt`.
 
 ## Documentation
 
-Documentation is still lacking, but each function and concept is described
-in its `.h` header file.
+Documentation is still lacking, but each public function and concept is
+described in its `.h` header file while internal functions are described
+in their `.c` files.
+
+
+## Testing
+
+Regression tests are integrated into the build process.
+The tests are in the `tests/` sub-directory.
 
 
 ## Examples
 
+The test programs in the `tests/` sub-directory serve as examples, but some
+more explicit examples will be provided in the `examples/` sub-directory.
+
 More documentation and usage examples will come.
-For now, check the .c files in the tests/ directory for usage examples.
 
 
 
@@ -119,7 +132,8 @@ Scattered lists of things to do:
   i.e.: `rd_workers_create(..., rd_conf_getu32("sys.cpu.cores") * 16);`
 - Configuration/.rc file support using the rd_opt_t framework allowing
    the same configuration token to be specified both as command line
-   argument and configuration file without any extra development effort.
+   argument, CLI command and configuration file directive without any
+   extra development effort.
 - rdmkbuildtree.sh - script to generate makefiles at the start of a project,
   debian directories, etc.
 - Add anything else that may come in handy for more than one program ever.
