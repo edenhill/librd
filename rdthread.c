@@ -33,6 +33,7 @@
 #include "rdlog.h"
 
 #include <sys/prctl.h>
+#include <stdarg.h>
 
 rd_thread_t *rd_mainthread;
 __thread rd_thread_t *rd_currthread;
@@ -170,3 +171,24 @@ int rd_threads_create (const char *nameprefix, int threadcount,
 
 	return threadcount - failed;
 }
+
+
+int rd_thread_sigmask (int how, ...) {
+	va_list ap;
+	sigset_t set;
+	int sig;
+
+	sigemptyset(&set);
+
+	va_start(ap, how);
+	while ((sig = va_arg(ap, int)) != RD_SIG_END) {
+		if (sig == RD_SIG_ALL)
+			sigfillset(&set);
+		else
+			sigaddset(&set, sig);
+	}
+	va_end(ap);
+
+	return pthread_sigmask(how, &set, NULL);
+}
+

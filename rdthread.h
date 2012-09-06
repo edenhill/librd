@@ -33,6 +33,8 @@
 
 #include "rdqueue.h"
 #include "rdtime.h"
+#include "rdio.h"
+#include "rdsignal.h"
 
 
 typedef struct rd_thread_s {
@@ -99,6 +101,21 @@ static inline rd_thread_t *rd_currthread_get (void) {
 
 	return rd_currthread;
 }
+
+
+/**
+ * va-arg wrapper for pthread_sigmask().
+ * The va-arg-list must be terminated with RD_SIG_END.
+ * RD_SIG_ALL means all signals.
+ *
+ * Example:
+ *   rd_thread_sigmask(SIG_BLOCK, RD_SIG_ALL, RD_SIG_END);
+ *  or
+ *   rd_thread_sigmask(SIG_SETMASK, SIGUSR1, SIGUSR2, SIGIO, RD_SIG_END);
+ *
+ * Returns the return value from pthread_sigmask().
+ */
+int rd_thread_sigmask (int how, ...);
 
 
 #define rd_assert_inthread(rdt)      assert(rd_currthread == (rdt))
