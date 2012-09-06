@@ -37,35 +37,33 @@
 
 
 static const char *rd_opt_syntaxname (const rd_opt_t *ro) {
-	static char ret[128];
+	static char ret[128][4];
+	static int i = 0;
 	int retof = 0;
 
-	*ret = '\0';
+	i = (i + 1) % 4;
+	*ret[i] = '\0';
 
 	if (ro->ro_short)
-		retof += snprintf(ret+retof, sizeof(ret)-retof,
+		retof += snprintf(ret[i]+retof, sizeof(ret[i])-retof,
 				  "-%c%s",
 				  ro->ro_short,
 				  ro->ro_long ? "/" : "");
 
 	if (ro->ro_long)
-		retof += snprintf(ret+retof, sizeof(ret)-retof,
-				  "%s", ro->ro_long);
+		retof += snprintf(ret[i]+retof, sizeof(ret[i])-retof,
+				  "--%s", ro->ro_long);
 
 	if (ro->ro_argcnt)
-		retof += snprintf(ret+retof, sizeof(ret)-retof,
+		retof += snprintf(ret[i]+retof, sizeof(ret[i])-retof,
 				  " <...>");
 
-	return ret;
+	return ret[i];
 }
 
 
-/**
- * FIXME: Currently treats ro_argcnt as a boolean, i.e., no support
- *        for more than 1 argument.
- */
 const char *rd_opt_parse (const rd_opt_t *ros,
-			  int argc, const char *const *argv, int *argip) {
+			  int argc, char **argv, int *argip) {
 	static char ret[1024];
 	int retof;
 	const rd_opt_t *ro = ros;
@@ -73,6 +71,7 @@ const char *rd_opt_parse (const rd_opt_t *ros,
 	int missed_reqs = 0;
 	int argi;
 	int roi;
+	const rd_opt_t *mutro[RD_OPT_MUT_NUM+1] = {};
 
 	rd_bitvec_init(&opts_found, RD_BITVEC_STATIC, 512);
 
@@ -90,11 +89,15 @@ const char *rd_opt_parse (const rd_opt_t *ros,
 		if (*argv[argi] != '-')
 			break; /* First non-option, we're done. */
 
+		if (!strcmp(argv[argi], "--help"))
+			return "(help)";
+
 		if (argv[argi][1] == '-')
 			longopt = &argv[argi][2];
 		else if (argv[argi][2] != '\0')
 			val = &argv[argi][2];
 
+		/* Match option */
 		for (ro = ros, roi = 0 ;
 		     ro->ro_type != RD_OPT_END ; ro++, roi++) {
 			if (!longopt && ro->ro_short) {
@@ -134,8 +137,25 @@ const char *rd_opt_parse (const rd_opt_t *ros,
 				return ret;
 			}
 
+			/* Check mutual exclusitivity. */
+			if (BIT_TEST(ro->ro_type, RD_OPT_MUT_MASK)) {
+				int mg = RD_OPT_MUT_GRP(ro->ro_type);
+				if (mutro[mg]) {
+					snprintf(ret, sizeof(ret),
+						 "Option %s is mutually "
+						 "exclusive with already set "
+						 "option %s",
+						 rd_opt_syntaxname(ro),
+						 rd_opt_syntaxname(mutro[mg]));
+					rd_bitvec_free(&opts_found);
+					return ret;
+				}
+				
+				mutro[mg] = ro;
+			}
+
 			/* Use default assignment parser if no parser
-			 * is set but a specific a pointer is. */
+			 * is set but a specific pointer is. */
 			if (!(parser = ro->ro_parse) && ro->ro_opaque)
 				parser = rd_opt_parse_assign;
 
@@ -175,8 +195,13 @@ const char *rd_opt_parse (const rd_opt_t *ros,
 		if (rd_bitvec_test(&opts_found, roi))
 			continue;
 
-		/* Required option not passed, construct error string. */
+		/* Required values in mutual exclusitivity groups only
+		 * require one of the mutual excl. options to have been set. */
+		if (BIT_TEST(ro->ro_type, RD_OPT_MUT_MASK) &&
+		    mutro[RD_OPT_MUT_GRP(ro->ro_type)])
+			continue;
 
+		/* Required option not passed, construct error string. */
 		retof += snprintf(ret+retof, sizeof(ret)-retof, "%s ",
 				  missed_reqs ? "," : "");
 
@@ -209,10 +234,6 @@ const char *rd_opt_parse (const rd_opt_t *ros,
 }
 
 
-/**
- * Standard parser that assigns the value to the specified pointer
- * in the ro_opaque field according to the ro_type.
- */
 rd_opt_parse_f(rd_opt_parse_assign) {
 	static char ret[512];
 
@@ -279,13 +300,13 @@ rd_opt_parse_f(rd_opt_parse_assign) {
 
 
 
-/**
- * Prints program command line option usage.
- */
 void rd_opt_usage (const rd_opt_t *ros, FILE *fp,
 		   const char *argv0, const char *extra_args) {
 	const rd_opt_t *ro;
-	
+	int confnamecnt = 0;
+	int mutcnt[RD_OPT_MUT_NUM+1] = {};
+	int mg;
+
 	if (!ros || BIT_TEST(ros->ro_type, RD_OPT_END)) {
 		/* No options */
 		fprintf(fp, "Usage: %s%s%s\n\n",
@@ -304,6 +325,8 @@ void rd_opt_usage (const rd_opt_t *ros, FILE *fp,
 	for (ro = ros ; !BIT_TEST(ro->ro_type, RD_OPT_END) ; ro++) {
 		char buf[40];
 		int of = 0;
+
+		char mgstr[2];
 
 		if (ro->ro_short && ro->ro_long)
 			of = snprintf(buf, sizeof(buf), "-%c | --%s",
@@ -332,11 +355,20 @@ void rd_opt_usage (const rd_opt_t *ros, FILE *fp,
 				       " <%s>", typestr);
 		}
 
-		fprintf(fp, " %s %-28s  ", 
-			ro->ro_type & RD_OPT_REQ ? "*" : " ", buf);
+		if ((mg = RD_OPT_MUT_GRP(ro->ro_type))) {
+			mutcnt[mg]++;
+			snprintf(mgstr, sizeof(mgstr), "%i", mg);
+		} else
+			strcpy(mgstr, " ");
 
-		if (ro->ro_confname)
+		fprintf(fp, " %s%s  %-28s  ", 
+			ro->ro_type & RD_OPT_REQ ? "*" : " ", mgstr, buf);
+
+
+		if (ro->ro_confname) {
 			fprintf(fp, "{%s} ", ro->ro_confname);
+			confnamecnt++;
+		}
 
 		if (ro->ro_help)
 			fprintf(fp, "%s", ro->ro_help);
@@ -348,8 +380,33 @@ void rd_opt_usage (const rd_opt_t *ros, FILE *fp,
 	
 	fprintf(fp,
 		"\n"
-		" *     = Required option\n"
-		" {..}  = Configuration file token\n"
-		"\n");
+		" *     = Required option\n");
 
+	if (confnamecnt)
+		fprintf(fp, " {..}  = Configuration file token\n");
+
+	for (mg = 1 ; mg < RD_OPT_MUT_NUM+1 ; mg++)
+		if (mutcnt[mg])
+			fprintf(fp, " %i     = Mutual exclusive group #%i\n",
+				mg, mg);
+
+	fprintf(fp, "\n");
+
+}
+
+
+int rd_opt_get (const rd_opt_t *ros,
+		int argc, char **argv, int *argip,
+		const char *extra_args) {
+	
+	const char *errstr;
+
+	if ((errstr = rd_opt_parse(ros, argc, argv, argip))) {
+		if (strcmp(errstr, "(help)"))
+			fprintf(stderr, "%s: %s\n\n", argv[0], errstr);
+		rd_opt_usage(ros, stderr, argv[0], extra_args);
+		return 0;
+	}
+
+	return 1;
 }
