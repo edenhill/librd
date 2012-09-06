@@ -26,6 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* NOTE: rdbuf is work in progress. */
+
 #pragma once
 
 #include <stdarg.h>
