@@ -90,4 +90,20 @@
 #define rd_atomic_sub_prev(PTR,VAL)  __sync_fetch_and_sub(PTR,VAL)
 
 
+
+#ifndef be64toh
+#include <byteswap.h>
+
+#if __BYTE_ORDER == __BIG_ENDIAN
+#define be64toh(x) (x)
+#else
+# if __BYTE_ORDER == __LITTLE_ENDIAN
+#define be64toh(x)  bswap_64(x)
+# endif
+#endif
+
+#define htobe64(x) be64toh(x)
+#endif
+
+
 void rd_init (void);
