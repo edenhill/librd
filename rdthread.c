@@ -89,6 +89,9 @@ void rd_thread_dispatch (void) {
 static void *rd_thread_start_routine (void *arg) {
 	rd_thread_t *rdt = arg;
 	void *ret;
+	
+	/* By default with block the user-defined signals. */
+	rd_thread_sigmask(SIG_BLOCK, SIGUSR1, SIGUSR2, RD_SIG_END);
 
 	rd_currthread = rdt;
 
@@ -128,7 +131,7 @@ rd_thread_t *rd_thread_create (const char *name,
 	rdt->rdt_start = start_routine;
 	rdt->rdt_start_arg = arg;
 
-
+	/* FIXME: We should block all signals until pthread_create returns. */
 	if (pthread_create(&rdt->rdt_thread, attr,
 			   rd_thread_start_routine, rdt)) {
 		int errno_save = errno;

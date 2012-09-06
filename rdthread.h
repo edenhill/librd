@@ -78,19 +78,39 @@ extern __thread rd_thread_t *rd_currthread;
  * Use prior to thread destruction.
  */
 void         rd_thread_cleanup (void);
+
+
 rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread);
 
+/**
+ * Creates and starts a new thread and returns its rd_thread_t handle.
+ *
+ * Same semantics as pthread_create() with the following exceptions:
+ *  - User-defined signals are by default blocked by the new thread:
+ *    SIGUSR1, SIGUSR2.
+ *    Use rd_thread_sigmask() to unblock.
+ */
 rd_thread_t *rd_thread_create (const char *name,
 			       const pthread_attr_t *attr,
 			       void *(*start_routine)(void*),
 			       void *arg);
 
+/**
+ * Wrapper around rd_thread_create() for creating multiple ('threadcount')
+ * threads.
+ *
+ * Useful for creating a set of worker threads or similar.
+ */
 int rd_threads_create (const char *nameprefix, int threadcount,
 		       const pthread_attr_t *attr,
 		       void *(*start_routine)(void*),
 		       void *arg);
 
 
+/**
+ * This creates the rd_currthread handle for threads that where not
+ * created through rd_thread_create().
+ */
 static inline rd_thread_t *rd_currthread_get (void) RD_UNUSED;
 static inline rd_thread_t *rd_currthread_get (void) {
 
