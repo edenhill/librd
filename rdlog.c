@@ -99,10 +99,10 @@ void rdputs0 (const char *file, const char *func, int line,
 		snprintf(thrname, sizeof(thrname), "thr:%x",
 			 (int)pthread_self());
 
-	of += snprintf(buf+of, sizeof(buf)-of, "|%" PRIu64 ".%03" PRIu64
-		       "|%s:%i|%s| ",
-		       now / 1000,
-		       now % 1000,
+	of += snprintf(buf+of, sizeof(buf)-of,
+		       "|%"PRIu64".%06"PRIu64"|%s:%i|%s| ",
+		       now / (uint64_t)1000000,
+		       now % (uint64_t)1000000,
 		       func, line,
 		       rd_currthread ? rd_currthread->rdt_name : thrname);
 
