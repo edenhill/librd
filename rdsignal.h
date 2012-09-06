@@ -28,6 +28,10 @@
 
 #pragma once
 
+#include <signal.h>
+
+#define RD_SIG_ALL  -1
+#define RD_SIG_END  -2
 
 extern sigset_t rd_intr_sigset;
 extern int      rd_intr_blocked;
