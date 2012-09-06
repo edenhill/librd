@@ -11,12 +11,14 @@ LD=gcc
 
 SRCS=	rd.c rdqueue.c rdthread.c rdtimer.c rdfile.c rdunits.c \
 	rdlog.c rdbits.c rdopt.c rdmem.c rdaddr.c rdstring.c rdcrc32.c \
-	rdgz.c rdrand.c rdbuf.c rdavl.c
+	rdgz.c rdrand.c rdbuf.c rdavl.c rdio.c rdencoding.c \
+	rdkafka.c
 
 HDRS=	rdbits.h rdevent.h rdfloat.h rd.h rdsysqueue.h rdqueue.h \
 	rdsignal.h rdthread.h rdtime.h rdtimer.h rdtypes.h rdfile.h rdunits.h \
 	rdlog.h rdopt.h rdmem.h rdaddr.h rdstring.h rdcrc32.h \
-	rdgz.h rdrand.h rdbuf.h rdavl.h
+	rdgz.h rdrand.h rdbuf.h rdavl.h rdio.h rdencoding.h \
+	rdkafka.h
 
 OBJS=	$(SRCS:.c=.o)
 DEPS=	${OBJS:%.o=%.d}

@@ -51,6 +51,7 @@ Non-exhaustive list of current **librd** functionality:
 - `rdavl.h`: Thread-safe AVL trees.
 - `rdio.h`: Socket/fd IO abstraction and helpers.
 - `rdfile.h`: File/filesystem access helpers.
+- `rdkafka.h`: [Apache Kafka](http://incubator.apache.org/kafka) C driver.
 - `rdencoding.h`: Various encoder and decoder helpers (varint).
 
 
@@ -114,10 +115,24 @@ more explicit examples will be provided in the `examples/` sub-directory.
 More documentation and usage examples will come.
 
 
+# Apache Kafka
 
-# Projects using librd
+**librd** provides a high-performance native C driver for
+[Apache Kafka](http://incubator.apache.org/kafka) with support for both
+Producer and Consumer sides as well as compression.
+The driver is based on version 0.7.0 but most likely works with older versions
+too, please report whether this is true.
 
--  [Image Judge](https://github.com/edenhill/imagejudge)
+For usage see inline documentation in `rdkafka.h` and example code in
+`examples/rdkafka_example.c`.
+
+ZooKeeper integration is planned but currently not available.
+
+
+
+# Public projects using librd
+
+-  [Image Judge](https://github.com/edenhill/imagejudge) (TBA)
 
 
 
