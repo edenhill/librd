@@ -53,7 +53,7 @@ void rd_thread_init (void) {
 int rd_thread_poll (int timeout_ms) {
 	rd_fifoq_elm_t *rfqe;
 	int cnt = 0;
-	int nowait = timeout_ms == -1;
+	int nowait = timeout_ms == RD_POLL_NOWAIT;
 
 	while ((rfqe = rd_fifoq_pop0(&rd_currthread->rdt_eventq,
 				     nowait, timeout_ms))) {
