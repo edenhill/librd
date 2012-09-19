@@ -117,17 +117,8 @@ More documentation and usage examples will come.
 
 # Apache Kafka
 
-**librd** provides a high-performance native C driver for
-[Apache Kafka](http://incubator.apache.org/kafka) with support for both
-Producer and Consumer sides as well as compression.
-The driver is based on version 0.7.0 but most likely works with older versions
-too, please report whether this is true.
-
-For usage see inline documentation in `rdkafka.h` and example code in
-`examples/rdkafka_example.c`.
-
-ZooKeeper integration is planned but currently not available.
-
+**NOTE:** The Kafka implementation is being moved to its own library.
+See [librdkafka](https://github.com/edenhill/librdkafka).
 
 
 # Public projects using librd
