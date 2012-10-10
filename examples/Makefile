@@ -28,6 +28,8 @@ rdkafka_example: rdkafka_example.c
 	@echo "# More usage options:"
 	@echo "LD_LIBRARY_PATH=../ ./rdkafka_example --help"
 
+rdvarint: rdvarint.c
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
 
 clean:
-	rm -f rdkafka_example
+	rm -f rdkafka_example rdvarint
