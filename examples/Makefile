@@ -1,7 +1,7 @@
 CC ?= cc
 CFLAGS += -g
 CFLAGS += -Wall -Werror -Wfloat-equal -Wpointer-arith -O2 -I../
-LDFLAGS += -L../ -lrd
+LDFLAGS += -L../ ../librd.a
 LDFLAGS += -lpthread -lrt -lz
 
 # Profiling
