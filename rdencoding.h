@@ -74,3 +74,34 @@ int rd_varint_encode_u64 (uint64_t uval, void *dest, size_t size);
  * Same as rd_varint_encode_u64() but for signed int64 instead.
  */
 int rd_varint_encode_s64 (int64_t val, void *dest, size_t size);
+
+
+
+
+/**
+ * Decode hex string 'hexstr' into binary data stored in 'dst'.
+ * 'dst' should be sized at least 'inlen'/2.
+ *
+ * If 'inlen' is -1 the 'hexstr' is scanned until '\0' else until 'inlen'
+ * bytes have been scanned.
+ *
+ * The following characters are ignored in 'hexstr':
+ *  ' ', '\', '.', ':'
+ * Any hex characters (0-9a-fA-F) are decoded,
+ * while any other characters causes the decoding to stop.
+ *
+ * Returns the number of bytes written to 'dst'.
+ */
+int rd_hex2bin (const char *hexstr, int inlen, char *dst, int dstlen);
+
+
+/**
+ * Encode binary buffer 'bin' of 'inline' bytes as hex and store it in 'dst'.
+ * 'dst' should be sized at least 'inline'*2+1.
+ *
+ * 'dst' will be nul-terminated.
+ *
+ * Returns the number of characters written to 'dst', excluding the
+ * trailing '\0'.
+ */
+int rd_bin2hex (const char *bin, int inlen, char *dst, int dstlen);

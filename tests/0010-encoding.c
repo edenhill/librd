@@ -99,10 +99,34 @@ static int test_varint (void) {
 }
 
 
+static int test_hex (void) {
+	TEST_VARS;
+	const char *in = "My hex testing string is here, 123456789\0notincl";
+	char tmp1[512], tmp2[256];
+	char bin[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+	int r;
+
+	rd_bin2hex(in, strlen(in)+1, tmp1, sizeof(tmp1));
+	rd_hex2bin(tmp1, -1, tmp2, sizeof(tmp2));
+	TEST_STR_EQ(tmp2, in);
+
+	rd_bin2hex(bin, sizeof(bin), tmp1, sizeof(tmp1));
+	TEST_STR_EQ(tmp1, "000102030405060708090a0b0c0d0e0f");
+	r = rd_hex2bin(tmp1, -1, tmp2, sizeof(tmp2));
+	TEST_INT_EQ(r, 16);
+	TEST_ASSERT(!memcmp(tmp2, bin, 16));
+
+	TEST_RETURN;
+}
+
 int main (int argc, char **argv) {
 	TEST_VARS;
 
+	TEST_INIT;
+
 	fails += test_varint();
+	fails += test_hex();
 
 	TEST_EXIT;
 }

@@ -109,3 +109,67 @@ int rd_varint_encode_s64 (int64_t val, void *dest, size_t size) {
 
 	return rd_varint_encode_u64(uval, dest, size);
 }
+
+
+
+
+int rd_hex2bin (const char *hexstr, int inlen, char *dst, int dstlen) {
+	const char *end = inlen == -1 ?
+		(const char *)UINTPTR_MAX : hexstr+inlen;
+	const char *s = hexstr;
+	char *d = dst;
+	char *dend = dst + dstlen;
+	int state = 0;
+	static const char ignore[256] = {
+		[' '] = 1, ['\t'] = 1, ['.'] = 1,  [':'] = 1,
+	};
+
+	while (*s && s < end && d < dend) {
+		char c;
+
+		if (ignore[(int)*s]) {
+			s++;
+			continue;
+		}
+		
+		if (*s >= '0' && *s <= '9')
+			c = *s - '0';
+		else if (*s >= 'A' && *s <= 'F')
+			c = *s - 'A' + 10;
+		else if (*s >= 'a' && *s <= 'f')
+			c = *s - 'a' + 10;
+		else
+			break;
+
+		if (state++ & 1)
+			*(d++) |= c;
+		else
+			*d = c << 4;
+
+		s++;
+	}
+
+	return (int)(d-dst);
+}
+
+
+int rd_bin2hex (const char *bin, int inlen, char *dst, int dstlen) {
+	const char *end = bin+inlen;
+	const char *s = bin;
+	char *d = dst;
+	char *dend = dst + dstlen;
+	static const char map[16] = {
+		'0', '1', '2', '3', '4', '5', '6', '7', 
+		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+	while (s < end && d+3 < dend) {
+		*d++ = map[*s >> 4];
+		*d++ = map[*s & 0x0f];
+		s++;
+	}
+	if (d < dend)
+		*d = '\0';
+
+	return (int)(d - dst);
+}
+
