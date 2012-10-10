@@ -30,9 +30,37 @@
 /**
  * Common helpers for test programs.
  */
+
+
+
+/* Globals */
+static int tests_dbg RD_UNUSED = 0;
+
+
 #define TEST_VARS       int fails = 0
 #define TEST_RETURN     return fails
-#define TEST_EXIT       exit(fails ? 1 : 0)
+#define TEST_EXIT do {							\
+		if (fails > 0)						\
+			fprintf(stderr, "\n\n%s: %i TESTS FAILED\n",	\
+				__FILE__, fails);			\
+		exit(fails ? 1 : 0);					\
+	} while (0)
+
+
+#define TEST_ACCUM(call) fails += call
+
+#define TEST_IS_DBG  tests_dbg
+
+#define TEST_DBG(desc...) do {			\
+		if (tests_dbg) {					\
+			fprintf(stderr, "%s: TEST DEBUG: %s:%i: ",	\
+				__FILE__, __FUNCTION__, __LINE__);	\
+			fprintf(stderr, desc);				\
+			fprintf(stderr, "\n");				\
+		}							\
+	} while (0)
+
+
 
 #define TEST_FAIL(reason...) do {				     \
     fails++;							     \
@@ -52,3 +80,60 @@
   } while (0)
 
 
+#define TEST_ASSERT(expr) do {						\
+	if (!(expr))							\
+		TEST_FAIL("test expression \"%s\" failed", #expr);	\
+	else								\
+		TEST_OK("test expression \"%s\" is true", #expr);	\
+	} while (0)
+
+#define TEST_STR_EQ(a, b) do {						\
+	if (strcmp(a, b))						\
+		TEST_FAIL("test equality comparison of '%s' and '%s' failed", \
+			  a, b);					\
+	else								\
+		TEST_OK("test equality comparison of '%s' and '%s' is true", \
+			a, b);						\
+	} while (0)
+  
+
+#define TEST_STR_NEQ(a, b) do {						\
+	if (strcmp(a, b))						\
+		TEST_FAIL("test inequality comparison of '%s' "		\
+			  "and '%s' failed", a, b);			\
+	else								\
+		TEST_OK("test inequality comparison of '%s' "		\
+			" and '%s' is true", a, b);			\
+	} while (0)
+
+#define TEST_INT_EQ(a, b) do {						\
+	if ((a) != (b))							\
+		TEST_FAIL("test equality comparison of %i and %i failed", \
+			  a, b);					\
+	else								\
+		TEST_OK("test equality comparison of %i and %i is true", \
+			a, b);						\
+  } while (0)
+
+#define TEST_INT_NEQ(a, b) do {						\
+  if ((a) == (b))							\
+    TEST_FAIL("test inequality comparison of %i and %i failed", a, b);	\
+  else									\
+    TEST_OK("test inequality comparison of %i and %i is true", a, b);	\
+  } while (0)
+  
+
+#define TEST_OK(desc...) do {			\
+    if (tests_dbg) {				\
+      fprintf(stderr, "%s: TEST OK: %s:%i: ",	\
+      __FILE__, __FUNCTION__, __LINE__);	\
+      fprintf(stderr, desc);			\
+      fprintf(stderr, "\n");			\
+    }						\
+  } while (0)
+
+
+#define TEST_INIT do {				\
+    if (getenv("LIBRD_TEST_DBG"))		\
+      tests_dbg = 1;				\
+} while (0)
