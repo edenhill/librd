@@ -45,11 +45,16 @@
  *
  */
 
+#define RD_VARINT_DECODE_ERR(vlen)       ((vlen) <= 0)
+#define RD_VARINT_DECODE_OVERFLOW(vlen)  ((vlen) <= -9)
+#define RD_VARINT_DECODE_UNDERFLOW(vlen) (-(vlen))
+
 /**
  * Decode a variant at 'buf' (buffer is of size 'len') and return
  * it as a uint64. The read length is stored in '*vlenp'.
- * If '*vlenp' is < 0 the varint would overflow.
- * If '*vlenp' is 0 the buffer was empty.
+ * If '*vlenp' is < -9 the varint would overflow.
+ * If '*vlenp' is <= 0 > -9 the varint could not be decoded due to
+ * buffer shortage.
  */
 uint64_t rd_varint_decode_u64 (const void *buf, size_t size, int *vlenp);
 

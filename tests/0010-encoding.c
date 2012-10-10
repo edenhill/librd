@@ -81,13 +81,18 @@ static int test_varint (void) {
 	buf[1] = 0x02;
 	buf[2] = 0xff;
 	v = rd_varint_decode_u64(buf, sizeof(buf), &vlen);
-	if (vlen <= 0)
+	if (RD_VARINT_DECODE_ERR(vlen))
 		TEST_FAIL("#%i: varint decode failed: vlen = %i",
 			  i, vlen);
 	if (v2 != v)
 		TEST_FAIL("#%i: varint decode incorrect: "
 			  "in %"PRId64 " != out %"PRId64,
 			  i, v2, v);
+
+	/* Buffer under flow */
+	v = rd_varint_decode_u64(buf, 1, &vlen);
+	TEST_ASSERT(RD_VARINT_DECODE_ERR(vlen));
+	TEST_ASSERT(RD_VARINT_DECODE_UNDERFLOW(vlen));
 
 
 	TEST_RETURN;

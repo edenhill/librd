@@ -55,6 +55,11 @@ uint64_t rd_varint_decode_u64 (const void *buf,
 		bits += 7;
 	}
 
+	if (*vlenp == 0 || s[(*vlenp)-1] >= 0x80) {
+	  /* Buffer underflow, indicate that we need more data. */
+	  *vlenp = -((*vlenp)+1);
+	}
+
 	return 0;
 }
 
