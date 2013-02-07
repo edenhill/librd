@@ -163,7 +163,7 @@ int rd_bin2hex (const char *bin, int inlen, char *dst, int dstlen) {
 		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
 	while (s < end && d+3 < dend) {
-		*d++ = map[*s >> 4];
+		*d++ = map[(*s & 0xff) >> 4];
 		*d++ = map[*s & 0x0f];
 		s++;
 	}
