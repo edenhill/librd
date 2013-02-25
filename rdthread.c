@@ -113,6 +113,8 @@ rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread) {
 
 	rdt->rdt_state = RD_THREAD_S_RUNNING;
 
+	rd_fifoq_init(&rdt->rdt_eventq);
+
 	if (pthread)
 		rdt->rdt_thread = *pthread;
 
