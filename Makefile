@@ -9,7 +9,7 @@ PREFIX?=/usr/local
 # Use gcc as ld to avoid __stack_chk_fail_error symbol error.
 LD=gcc
 
-SRCS=	rd.c rdqueue.c rdthread.c rdtimer.c rdfile.c rdunits.c \
+SRCS=	rd.c rdevent.c rdqueue.c rdthread.c rdtimer.c rdfile.c rdunits.c \
 	rdlog.c rdbits.c rdopt.c rdmem.c rdaddr.c rdstring.c rdcrc32.c \
 	rdgz.c rdrand.c rdbuf.c rdavl.c rdio.c rdencoding.c \
 	rdkafka.c

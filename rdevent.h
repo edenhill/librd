@@ -62,6 +62,30 @@ static void rd_thread_event_add (rd_thread_t *rdt,
 
 
 /**
+ * Convenience function to enqueue a call to function 'cb' on thread 'rdt'.
+ * Depending on the value of 'argcnt' (0..4) 'cb' may be one of:
+ *
+ *  argcnt | prototype
+ *  -------+--------------------------------------------------------------
+ *     0   | void (*cb) (void)
+ *     1   | void (*cb) (void *arg1)
+ *     2   | void (*cb) (void *arg1, void *arg2)
+ *     3   | void (*cb) (void *arg1, void *arg2, void *arg3)
+ *     4   | void (*cb) (void *arg1, void *arg2, void *arg3, void *arg4)
+ */
+void rd_thread_func_call (rd_thread_t *rdt, void *cb, int argcnt, void **args);
+#define rd_thread_func_call0(rdt,cb)                                    \
+	rd_thread_func_call(rdt,cb,0,NULL)
+#define rd_thread_func_call1(rdt,cb,arg1)			        \
+	rd_thread_func_call(rdt, cb, 1, ((void *[]){ arg1 }))
+#define rd_thread_func_call2(rdt,cb,arg1,arg2)				\
+	rd_thread_func_call(rdt, cb, 2, ((void *[]){ arg1, arg2 }))
+#define rd_thread_func_call3(rdt,cb,arg1,arg2,arg3)			\
+	rd_thread_func_call(rdt, cb, 3, ((void *[]){ arg1, arg2, arg3 }))
+#define rd_thread_func_call4(rdt,cb,arg1,arg2,arg3,arg4)		\
+	rd_thread_func_call(rdt, cb, 4, ((void *[]){ arg1, arg2, arg3, arg4 }))
+
+/**
  * Calls the callback and destroys the event.
  */
 static void rd_thread_event_call (rd_thread_event_t *rte) RD_UNUSED;
