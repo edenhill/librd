@@ -6,7 +6,7 @@ LIBVER_FULL=$(LIBVER).0.0
 DESTDIR?=/usr/local
 
 # Use gcc as ld to avoid __stack_chk_fail_error symbol error.
-LD=gcc
+LD=$(CC)
 
 SRCS=	rd.c rdevent.c rdqueue.c rdthread.c rdtimer.c rdfile.c rdunits.c \
 	rdlog.c rdbits.c rdopt.c rdmem.c rdaddr.c rdstring.c rdcrc32.c \
