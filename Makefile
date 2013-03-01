@@ -34,7 +34,7 @@ LDFLAGS+=-shared -g -fPIC -lpthread -lrt -lz -lc
 
 .PHONY:
 
-all: libs testscontinue
+all: libs testcontinue
 
 libs: $(LIBNAME).so $(LIBNAME).a
 
@@ -49,10 +49,10 @@ $(LIBNAME).so:	$(OBJS)
 $(LIBNAME).a:	$(OBJS)
 	$(AR) rcs $@ $(OBJS)
 
-testscontinue: .PHONY
+testcontinue: .PHONY
 	make -C tests $@
 
-tests: .PHONY
+test: .PHONY
 	make -C tests $@
 
 install:

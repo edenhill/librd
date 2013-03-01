@@ -2,15 +2,16 @@
 CC ?= cc
 TEST_PROGS := ${TEST_SRCS:%.c=%.test}
 CFLAGS += -g
+CFLAGS += -fstack-protector --param=ssp-buffer-size=4 -Wformat 
+       -Werror=format-security
 CFLAGS += -Wall -Werror -Wfloat-equal -Wpointer-arith -O2 -I../
-LDFLAGS += -L../ -lrd
-LDFLAGS += -lpthread -lrt -lz
+LDFLAGS += ../librd.a -lpthread -lrt -lz
 
 # Profiling
 #CFLAGS += -O0 -pg
 #LDFLAGS += -pg
 
-all: tests
+all: test
 
 %.test: %.c
 	@(LIBS=`grep '^//LIBS=' $< | sed -e 's/^\/\/LIBS=//'` ; \
@@ -34,7 +35,7 @@ all: tests
 	fi)
 
 
-tests: $(TEST_PROGS)
+test: $(TEST_PROGS)
 
 clean:
 	rm -f $(TEST_PROGS)

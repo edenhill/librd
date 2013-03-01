@@ -76,7 +76,7 @@ Non-exhaustive list of current **librd** functionality:
 The above procedure continues on test failures, but that might not be
 desirable, so here's how to do make sure the tests pass before installing.
 
-      make libs tests install
+      make libs test install
 
 
       
