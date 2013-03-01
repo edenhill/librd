@@ -38,15 +38,15 @@ LDFLAGS+=-shared -g -fPIC -lpthread -lrt -lz -lc
 
 all: libs testcontinue
 
-libs: $(LIBNAME).so $(LIBNAME).a
+libs: $(LIBNAME).so.$(LIBVER) $(LIBNAME).a
 
 %.o: %.c
 	$(CC) -MD -MP $(CFLAGS) -c $<
 
-$(LIBNAME).so:	$(OBJS)
-	$(LD) -shared -Wl,-soname,$(LIBNAME).so.$(LIBVER) \
+$(LIBNAME).so.$(LIBVER): $(OBJS)
+	$(LD) -fPIC -shared -Wl,-soname,$@ \
 		$(LDFLAGS) $(OBJS) -o $@
-	ln -fs $(LIBNAME).so $(LIBNAME).so.$(LIBVER)
+	ln -fs $(LIBNAME).so.$(LIBVER) $(LIBNAME).so 
 
 $(LIBNAME).a:	$(OBJS)
 	$(AR) rcs $@ $(OBJS)
@@ -69,6 +69,6 @@ install:
 
 clean:
 	make -C tests clean
-	rm -f $(OBJS) $(DEPS) $(LIBNAME)
+	rm -f $(OBJS) $(DEPS) $(LIBNAME).a $(LIBNAME).so $(LIBNAME).so.$(LIBVER)
 
 -include $(DEPS)
