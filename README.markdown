@@ -1,7 +1,7 @@
 librd - Rapid Development C library
 ===================================
 
-Copyright (c) 2012, [Magnus Edenhill](http://www.edenhill.se/), et.al.
+Copyright (c) 2012-2013, [Magnus Edenhill](http://www.edenhill.se/), et.al.
 
 [https://github.com/edenhill/librd](https://github.com/edenhill/librd)
 
