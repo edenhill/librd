@@ -69,7 +69,7 @@ Non-exhaustive list of current **librd** functionality:
       make all
       make install
       # or to install in another location than /usr/local:
-      PREFIX=/my/prefix make install
+      DESTDIR=/my/prefix make install
 
 ### Rigid building
 

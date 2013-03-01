@@ -3,8 +3,7 @@ LIBNAME=librd
 LIBVER=0
 LIBVER_FULL=$(LIBVER).0.0
 
-
-PREFIX?=/usr/local
+DESTDIR?=/usr/local
 
 # Use gcc as ld to avoid __stack_chk_fail_error symbol error.
 LD=gcc
@@ -57,11 +56,14 @@ tests: .PHONY
 	make -C tests $@
 
 install:
-	install -d $(PREFIX)/include/librd $(PREFIX)/lib
-	install -t $(PREFIX)/include/librd $(HDRS)
-	install -t $(PREFIX)/lib $(LIBNAME).so
-	install -t $(PREFIX)/lib $(LIBNAME).so.$(LIBVER)
-	install -t $(PREFIX)/lib $(LIBNAME).a
+	install -d $(DESTDIR)/include/librd
+	install -d $(DESTDIR)/lib
+	install -d $(DESTDIR)/share/doc/librd$(LIBVER)
+	install -t $(DESTDIR)/include/librd $(HDRS)
+	install -t $(DESTDIR)/lib $(LIBNAME).so
+	install -t $(DESTDIR)/lib $(LIBNAME).so.$(LIBVER)
+	install -t $(DESTDIR)/lib $(LIBNAME).a
+	install -t $(DESTDIR)/share/doc/librd$(LIBVER) README.markdown
 
 clean:
 	make -C tests clean
