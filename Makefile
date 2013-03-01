@@ -32,7 +32,7 @@ CFLAGS+=-g
 #CFLAGS += -pg
 #LDFLAGS += -pg
 
-LDFLAGS+=-shared -g -fPIC -lpthread -lrt -lz -lc
+LDFLAGS+=-g -lpthread -lrt -lz -lc
 
 .PHONY:
 
