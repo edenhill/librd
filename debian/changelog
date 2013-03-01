@@ -1,0 +1,5 @@
+librd (0.2.0-1) unstable; urgency=low
+  
+  * Initial debian packaging.
+  
+ -- Magnus Edenhill <librd@edenhill.se>  Fri, 01 Mar 2013 09:03:37 +0100

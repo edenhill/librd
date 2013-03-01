@@ -1,0 +1,65 @@
+Source: librd
+Section: libs
+Priority: optional
+Maintainer: Magnus Edenhill <librd@edenhill.se>
+Build-Depends: zlib1g-dev
+Standards-Version: 3.9.3
+Vcs-Git: git://github.com/edenhill/librd.git
+Vcs-Browser: https://github.com/edenhill/librd
+Homepage: https://github.com/edenhill/librd
+
+Package: librd0
+Provides: librd
+Architecture: any
+Pre-Depends: multiarch-support
+Depends: zlib1g, ${misc:Depends}, ${shlibs:Depends}
+Description: Rapid Development C library
+ librd aims to provide the commonly needed helpers, sub systems, snippets and
+ misc. functionality that lacks from the standard C libraries, allowing for
+ rapid development of new programs and non-intrusive extension of existing
+ applications.
+ librd provides, on a higher level:
+  * proper thread support throughout the library
+  * consistent, natural and non-bloated APIs and interfaces
+  * scalability and performance
+  * suitable for embedded systems, large-scale backend systems,
+    GUI applications, etc.
+
+Package: librd-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends:
+ ${misc:Depends}, librd0 (= ${binary:Version}),
+ librd-dev (= ${binary:Version})
+Description: Rapid Development C library
+ librd aims to provide the commonly needed helpers, sub systems, snippets and
+ misc. functionality that lacks from the standard C libraries, allowing for
+ rapid development of new programs and non-intrusive extension of existing
+ applications.
+ librd provides, on a higher level:
+  * proper thread support throughout the library
+  * consistent, natural and non-bloated APIs and interfaces
+  * scalability and performance
+  * suitable for embedded systems, large-scale backend systems,
+    GUI applications, etc.
+ .
+ This package contains the debugging symbols.
+
+Package: librd-dev
+Section: libdevel
+Architecture: any
+Depends: ${misc:Depends}, librd0 (= ${binary:Version})
+Description: Rapid Development C library
+ librd aims to provide the commonly needed helpers, sub systems, snippets and
+ misc. functionality that lacks from the standard C libraries, allowing for
+ rapid development of new programs and non-intrusive extension of existing
+ applications.
+ librd provides, on a higher level:
+  * proper thread support throughout the library
+  * consistent, natural and non-bloated APIs and interfaces
+  * scalability and performance
+  * suitable for embedded systems, large-scale backend systems,
+    GUI applications, etc.
+ .
+ This package contains the development files.

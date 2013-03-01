@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+#export DH_VERBOSE=1
+
+%:
+	dh $@
+
+
+override_dh_auto_build:
+	make libs
+
+#override_dh_auto_install:
+#	dh_auto_install
+
+override_dh_builddeb:
+	dh_builddeb -- -Zgzip -z9
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp/usr
+
+override_dh_install:
+	dh_install --autodest --list-missing
+
+override_dh_strip:
+	dh_strip --dbg-package=librd-dbg
