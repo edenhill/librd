@@ -40,13 +40,8 @@ __thread rd_thread_t *rd_currthread;
 
 
 void rd_thread_init (void) {
-	rd_mainthread = calloc(1, sizeof(*rd_mainthread));
-	rd_mainthread->rdt_state = RD_THREAD_S_RUNNING;
-	rd_mainthread->rdt_name = strdup("main");
-	rd_mainthread->rdt_thread = pthread_self();
-
-	rd_fifoq_init(&rd_mainthread->rdt_eventq);
-
+	pthread_t thr = pthread_self();
+	rd_mainthread = rd_thread_create0("main", &thr);
 	rd_currthread = rd_mainthread;
 }
 
@@ -67,6 +62,15 @@ int rd_thread_poll (int timeout_ms) {
 	}
 
 	return cnt;
+}
+
+
+static void rd_thread_destroy (rd_thread_t *rdt) {
+	assert(rdt->rdt_state != RD_THREAD_S_RUNNING);
+	if (rdt->rdt_name)
+		free(rdt->rdt_name);
+	rd_fifoq_destroy(&rdt->rdt_eventq);
+	free(rdt);
 }
 
 void rd_thread_cleanup (void) {
@@ -98,6 +102,7 @@ static void *rd_thread_start_routine (void *arg) {
 	ret = rdt->rdt_start(rdt->rdt_start_arg);
 
 	rd_thread_cleanup();
+	rd_thread_destroy(rdt);
 
 	return ret;
 }
@@ -137,9 +142,7 @@ rd_thread_t *rd_thread_create (const char *name,
 	if (pthread_create(&rdt->rdt_thread, attr,
 			   rd_thread_start_routine, rdt)) {
 		int errno_save = errno;
-		if (rdt->rdt_name)
-			free(rdt->rdt_name);
-		free(rdt);
+		rd_thread_destroy(rdt);
 		errno = errno_save;
 		return NULL;
 	}

@@ -78,6 +78,7 @@ typedef struct rd_fifoq_s {
 	int         rfq_inited;
 } rd_fifoq_t;
 
+void        rd_fifoq_destroy (rd_fifoq_t *rfg);
 rd_fifoq_t *rd_fifoq_init (rd_fifoq_t *rfq);
 
 #define RD_FIFOQ_INITIALIZER(rfq)			\

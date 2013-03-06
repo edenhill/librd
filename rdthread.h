@@ -65,6 +65,7 @@ extern __thread rd_thread_t *rd_currthread;
 
 /**
  * Slow controlled thread exit through rd_thread_dispatch().
+ * Called by exiting thread.
  */
 #define rd_thread_exit() do {					  \
 	rd_currthread_get();				          \
@@ -73,9 +74,34 @@ extern __thread rd_thread_t *rd_currthread;
 	(rd_currthread->rdt_state = RD_THREAD_S_EXITING);	  \
 	} while (0)
 
+
+/**
+ * Slow controlled thread exit through rd_thread_dispatch().
+ * Called by other thread.
+ */
+#define rd_thread_kill(rdt) do {					\
+		(rdt)->rdt_state = RD_THREAD_S_EXITING;			\
+	} while (0)
+
+
+static inline int rd_thread_kill_join (rd_thread_t *rdt,
+				       void **retval) RD_UNUSED;
+static inline int rd_thread_kill_join (rd_thread_t *rdt,
+				       void **retval) {
+	pthread_t pthread;
+
+	pthread = rdt->rdt_thread;
+	rd_thread_kill(rdt);
+
+	return pthread_join(pthread, retval);
+}
+
+
 /**
  * Clean up / free resources allocated to the current thread.
  * Use prior to thread destruction.
+ *
+ * Locality: the thread itself
  */
 void         rd_thread_cleanup (void);
 

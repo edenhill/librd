@@ -32,6 +32,18 @@
 
 
 
+void rd_fifoq_destroy (rd_fifoq_t *rfq) {
+	rd_fifoq_elm_t *rfqe;
+
+	rd_mutex_lock(&rfq->rfq_lock);
+	while ((rfqe = TAILQ_FIRST(&rfq->rfq_q))) {
+		TAILQ_REMOVE(&rfq->rfq_q, rfqe, rfqe_link);
+		free(rfqe);
+	}
+
+	rd_mutex_unlock(&rfq->rfq_lock);
+}
+
 rd_fifoq_t *rd_fifoq_init (rd_fifoq_t *rfq) {
 	if (!rfq)
 		rfq = calloc(1, sizeof(*rfq));
