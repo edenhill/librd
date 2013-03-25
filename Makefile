@@ -5,9 +5,6 @@ LIBVER_FULL=$(LIBVER).0.0
 
 DESTDIR?=/usr/local
 
-# Use gcc as ld to avoid __stack_chk_fail_error symbol error.
-LD=$(CC)
-
 SRCS=	rd.c rdevent.c rdqueue.c rdthread.c rdtimer.c rdfile.c rdunits.c \
 	rdlog.c rdbits.c rdopt.c rdmem.c rdaddr.c rdstring.c rdcrc32.c \
 	rdgz.c rdrand.c rdbuf.c rdavl.c rdio.c rdencoding.c \
@@ -32,7 +29,7 @@ CFLAGS+=-g
 #CFLAGS += -pg
 #LDFLAGS += -pg
 
-LDFLAGS+=-g -lpthread -lrt -lz -lc
+LDFLAGS+=-g
 
 .PHONY:
 
@@ -44,7 +41,7 @@ libs: $(LIBNAME).so.$(LIBVER) $(LIBNAME).a
 	$(CC) -MD -MP $(CFLAGS) -c $<
 
 $(LIBNAME).so.$(LIBVER): $(OBJS)
-	$(LD) -fPIC -shared -Wl,-soname,$@ \
+	$(LD) -fPIC -shared -soname,$@ \
 		$(LDFLAGS) $(OBJS) -o $@
 	ln -fs $(LIBNAME).so.$(LIBVER) $(LIBNAME).so 
 
