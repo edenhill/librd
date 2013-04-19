@@ -142,7 +142,9 @@ static inline rd_thread_t *rd_currthread_get (void) {
 
 	if (unlikely(!rd_currthread)) {
 		pthread_t thr = pthread_self();
-		rd_currthread = rd_thread_create0("non-rd", &thr);
+		char thrname[16];
+		snprintf(thrname, sizeof(thrname), "%p", (void *)thr);
+		rd_currthread = rd_thread_create0(thrname, &thr);
 	}
 
 	return rd_currthread;
