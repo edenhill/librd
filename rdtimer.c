@@ -28,7 +28,7 @@
 
 #include "rd.h"
 #include "rdtimer.h"
-
+#include "rdlog.h"
 
 
 rd_mutex_t rd_timers_lock = RD_MUTEX_INITIALIZER;
@@ -107,7 +107,8 @@ static inline int rd_timer_cmp (const rd_timer_t *a, const rd_timer_t *b) {
 /**
  * NOTE: rd_timers_lock must be held.
  */
-void rd_timer_start0 (rd_timer_t *rt, unsigned int interval_ms) {
+void rd_timer_start0 (rd_timer_t *rt, unsigned int interval_ms,
+		      int next_update) {
 
 	rd_timer_stop0(rt);
 
@@ -116,7 +117,8 @@ void rd_timer_start0 (rd_timer_t *rt, unsigned int interval_ms) {
 	if (rt->rt_next < TIMESPEC_TO_TS(&rd_timers_next_ts)) {
 		/* This timer will be the next one to fire. */
 		LIST_INSERT_HEAD(&rd_timers, rt, rt_link);
-		rd_timers_next_update(rt);
+		if (next_update)
+			rd_timers_next_update(rt);
 	} else {
 		/* FIXME: Smarter sorted list insertion, i.e. ,at least
 		 *        choose whether to start scanning from top or bottom
@@ -147,8 +149,6 @@ void rd_timer_stop0 (rd_timer_t *rt) {
 static rd_thread_event_f(rd_timer_call) {
 	rd_timer_t *rt = ptr;
 
-	/* FIXME: Theres a race condition here, a crash once said. */
-
 	assert(rt->rt_called > 0);
 
 	rt->rt_rte.rte_callback(rt->rt_rte.rte_ptr);
@@ -165,11 +165,8 @@ static rd_thread_event_f(rd_timer_call) {
 		 * state. It is now time to really remove it. */
 		rd_timer_destroy0(rt);
 
-	} else if (rt->rt_type == RD_TIMER_RECURR) {
-		/* Restart recurring timers */
-		rd_timer_start0(rt, rt->rt_interval);
-
-	} else if (rt->rt_flags & RD_TIMER_F_ATOMIC) {
+	} else if (rt->rt_type == RD_TIMER_ONCE &&
+		   rt->rt_flags & RD_TIMER_F_ATOMIC) {
 		/* Destroy atomic one-shot timers */
 		rd_timer_destroy0(rt);
 	}
@@ -186,45 +183,52 @@ static void *rd_timers_run (void *arg) {
 
 	while (1) {
 		rd_ts_t now;
-		rd_timer_t *rt, *rtn;
+		rd_timer_t *rt;
+		struct timespec timeout;
+
 		TAILQ_HEAD(, rd_timer_s) callouts =
 			TAILQ_HEAD_INITIALIZER(callouts);
-
+		
 		now = rd_clock();
 
 		while ((rt = LIST_FIRST(&rd_timers)) &&
 		       rt->rt_next <= now) {
 
-			assert(rt->rt_called < 10);
 			LIST_REMOVE(rt, rt_link);
 
 			TAILQ_INSERT_TAIL(&callouts, rt, rt_callout_link);
+
+			if (rt->rt_called > 10 &&
+			    !(rt->rt_called % 10)) {
+				/* More than 10 events are already
+				 * enqueued for this timer. The thread
+				 * is probably stalled, so print a warning. */
+				rdbg("WARNING: Timer %p has %i events enqueued "
+				     "on thread \"%s\" (%p): thread stalled?",
+				     rt, rt->rt_called, rt->rt_thread->rdt_name,
+				     rt->rt_thread);
+			}
 
 			/* Indicate with called counter that we're in
 			 * the callback (and without locks). This prohibits
 			 * some other thread from freeing the timer
 			 * while we're calling the callback. */
 			(void)rd_atomic_add(&rt->rt_called, 1);
-		}
-
-		rd_mutex_unlock(&rd_timers_lock);
-
-		rtn = TAILQ_FIRST(&callouts);
-		while (rtn) {
-			rt = rtn;
-			rtn = TAILQ_NEXT(rtn, rt_callout_link);
-
-			/* Enqueue callback event. */
-			assert(rt->rt_thread);
 			rd_thread_event_add(rt->rt_thread, rd_timer_call, rt);
 		}
 
-		rd_mutex_lock(&rd_timers_lock);
+		/* Restart recurring timers */
+		TAILQ_FOREACH(rt, &callouts, rt_callout_link) {
+			if (rt->rt_type == RD_TIMER_RECURR) {
+				/* Restart recurring timers. */
+				rd_timer_start0(rt, rt->rt_interval, 0);
+			}
+		}
 
 		rd_timers_next_update(LIST_FIRST(&rd_timers));
 
-		rd_cond_timedwait(&rd_timers_cond, &rd_timers_lock,
-				  &rd_timers_next_ts);
+		timeout = rd_timers_next_ts;
+		rd_cond_timedwait(&rd_timers_cond, &rd_timers_lock, &timeout);
 	}
 
 	return NULL;

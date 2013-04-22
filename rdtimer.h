@@ -69,7 +69,8 @@ typedef struct rd_timer_s {
 extern rd_mutex_t rd_timers_lock;
 
 void rd_timer_destroy0 (rd_timer_t *rt);
-void rd_timer_start0 (rd_timer_t *rt, unsigned int interval_ms);
+void rd_timer_start0 (rd_timer_t *rt, unsigned int interval_ms,
+		      int next_update);
 void rd_timer_stop0 (rd_timer_t *rt);
 
 static void rd_timer_init (rd_timer_t *rt, rd_timer_type_t type,
@@ -110,7 +111,7 @@ static inline void rd_timer_start (rd_timer_t *rt, unsigned int interval_ms) {
 	rd_mutex_lock(&rd_timers_lock);
 
 	rt->rt_interval = interval_ms;
-	rd_timer_start0(rt, interval_ms);
+	rd_timer_start0(rt, interval_ms, 1);
 
 	rd_mutex_unlock(&rd_timers_lock);
 }
