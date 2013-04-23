@@ -104,6 +104,8 @@ char *rd_file_read (const char *path, int *lenp) {
 		free(buf);
 		return NULL;
 	}
+	
+	close(fd);
 
 	buf[r] = '\0';
 	
