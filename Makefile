@@ -21,8 +21,7 @@ HDRS=	rdbits.h rdevent.h rdfloat.h rd.h rdsysqueue.h rdqueue.h \
 OBJS=	$(SRCS:.c=.o)
 DEPS=	${OBJS:%.o=%.d}
 
-CFLAGS+=-fstack-protector --param=ssp-buffer-size=4 -Wformat \
-	-Werror=format-security
+CFLAGS+=-Wformat -Werror=format-security
 CFLAGS+=-O2 -Wall -Werror -Wfloat-equal -Wpointer-arith -fPIC -I.
 CFLAGS+=-g
 
