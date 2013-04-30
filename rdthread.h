@@ -52,13 +52,6 @@ typedef struct rd_thread_s {
 	rd_fifoq_t rdt_eventq;
 } rd_thread_t;
 
-/* FIXME: rd-threads that call rd_thread_dispatch() will
- *        allow events from other threads (callbacks) and 
- *        thread-based timers to be executed on the thread, among
- *        other things.
- */
-
-
 
 extern rd_thread_t *rd_mainthread;
 extern __thread rd_thread_t *rd_currthread;
