@@ -51,7 +51,6 @@ Non-exhaustive list of current **librd** functionality:
 - `rdavl.h`: Thread-safe AVL trees.
 - `rdio.h`: Socket/fd IO abstraction and helpers.
 - `rdfile.h`: File/filesystem access helpers.
-- `rdkafka.h`: [Apache Kafka](http://incubator.apache.org/kafka) C driver.
 - `rdencoding.h`: Various encoder and decoder helpers (varint).
 
 
@@ -117,7 +116,7 @@ More documentation and usage examples will come.
 
 # Apache Kafka
 
-**NOTE:** The Kafka implementation is being moved to its own library.
+**NOTE:** The Kafka implementation has been moved to its own library.
 See [librdkafka](https://github.com/edenhill/librdkafka).
 
 
