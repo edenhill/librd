@@ -127,31 +127,37 @@ rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread) {
 }
 
 
-rd_thread_t *rd_thread_create (const char *name,
-			       const pthread_attr_t *attr,
-			       void *(*start_routine)(void*),
-			       void *arg) {
-	rd_thread_t *rdt;
+int rd_thread_create (rd_thread_t **rdt,
+		      const char *name,
+		      const pthread_attr_t *attr,
+		      void *(*start_routine)(void*),
+		      void *arg) {
+	rd_thread_t *rdt0;
 
-	rdt = rd_thread_create0(name, NULL);
+	rdt0 = rd_thread_create0(name, NULL);
 
-	rdt->rdt_start = start_routine;
-	rdt->rdt_start_arg = arg;
+	rdt0->rdt_start = start_routine;
+	rdt0->rdt_start_arg = arg;
 
+	if (rdt)
+		*rdt = rdt0;
+	
 	/* FIXME: We should block all signals until pthread_create returns. */
-	if (pthread_create(&rdt->rdt_thread, attr,
-			   rd_thread_start_routine, rdt)) {
+	if (pthread_create(&rdt0->rdt_thread, attr,
+			   rd_thread_start_routine, rdt0)) {
 		int errno_save = errno;
-		rd_thread_destroy(rdt);
+		rd_thread_destroy(rdt0);
+		if (rdt)
+			*rdt = NULL;
 		errno = errno_save;
-		return NULL;
+		return -1;
 	}
 
 #ifdef PR_SET_NAME
-	prctl(PR_SET_NAME, (char *)rdt->rdt_name, 0, 0, 0);
+	prctl(PR_SET_NAME, (char *)rdt0->rdt_name, 0, 0, 0);
 #endif
-
-	return rdt;
+	
+	return 0;
 }
 
 
@@ -170,7 +176,7 @@ int rd_threads_create (const char *nameprefix, int threadcount,
 		
 	for (i = 0 ; i < threadcount ; i++) {
 		sprintf(name, "%s%i", nameprefix, i);
-		if (!rd_thread_create(name, attr, start_routine, arg))
+		if (!rd_thread_create(NULL, name, attr, start_routine, arg))
 			failed++;
 	}
 

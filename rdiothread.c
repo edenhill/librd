@@ -134,9 +134,10 @@ static rd_thread_t *rd_io_worker_get (void) {
 			}
 
 			/* Create new worker */
-			rdt = rd_thread_create(rd_tsprintf("rd:io:%i",
+			rd_thread_create(&rdt, rd_tsprintf("rd:io:%i",
 							   rd_io_worker_cnt++),
-					       NULL, rd_io_worker_main, NULL);
+					 NULL, rd_io_worker_main, NULL);
+			/* FIXME: error handling */
 		}
 
 		return rdt;
@@ -220,9 +221,8 @@ static int rd_io_thread_start (void) {
 		return -1;
 	}
 
-	rd_io_thread = rd_thread_create("rd:io", NULL, rd_io_thread_main, NULL);
-
-	if (!rd_io_thread) {
+	if (rd_thread_create(&rd_io_thread, "rd:io", NULL,
+			     rd_io_thread_main, NULL) == -1) {
 		/* FIXME: log */
 		rdbg("Failed to create rd:io thread: %s", strerror(errno));
 		close(rd_io_thread_fd);

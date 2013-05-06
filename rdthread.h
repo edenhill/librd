@@ -103,16 +103,19 @@ rd_thread_t *rd_thread_create0 (const char *name, pthread_t *pthread);
 
 /**
  * Creates and starts a new thread and returns its rd_thread_t handle.
+ * The new thread handle is assigned to '*rdt' (if 'rdt' is non-null).
  *
  * Same semantics as pthread_create() with the following exceptions:
  *  - User-defined signals are by default blocked by the new thread:
  *    SIGUSR1, SIGUSR2.
  *    Use rd_thread_sigmask() to unblock.
  */
-rd_thread_t *rd_thread_create (const char *name,
-			       const pthread_attr_t *attr,
-			       void *(*start_routine)(void*),
-			       void *arg);
+int rd_thread_create (rd_thread_t **rdt, const char *name,
+		      const pthread_attr_t *attr,
+		      void *(*start_routine)(void*),
+		      void *arg);
+
+
 
 /**
  * Wrapper around rd_thread_create() for creating multiple ('threadcount')

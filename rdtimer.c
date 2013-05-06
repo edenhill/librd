@@ -244,5 +244,5 @@ void rd_timers_init (void) {
 #endif
 	rd_cond_init(&rd_timers_cond, &attr);
 
-	rd_thread_create("rd:timers", NULL, rd_timers_run, NULL);
+	rd_thread_create(NULL, "rd:timers", NULL, rd_timers_run, NULL);
 }
