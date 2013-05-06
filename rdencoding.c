@@ -122,6 +122,7 @@ int rd_hex2bin (const char *hexstr, int inlen, char *dst, int dstlen) {
 	int state = 0;
 	static const char ignore[256] = {
 		[' '] = 1, ['\t'] = 1, ['.'] = 1,  [':'] = 1,
+		['\n'] = 1, ['\r'] = 1,
 	};
 
 	while (*s && s < end && d < dend) {
