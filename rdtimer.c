@@ -195,6 +195,7 @@ static void *rd_timers_run (void *arg) {
 		       rt->rt_next <= now) {
 
 			LIST_REMOVE(rt, rt_link);
+			rt->rt_next = 0;
 
 			TAILQ_INSERT_TAIL(&callouts, rt, rt_callout_link);
 
