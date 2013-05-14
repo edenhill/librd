@@ -148,6 +148,10 @@ static void rd_avg_roll (rd_avg_t *ra, rd_ts_t now) {
 	missed = (now - ra->ra_end) / ra->ra_duration;
 	ra->ra_curr->missed = missed;
 
+	/* Call application roll callback, if any. */
+	if (ra->ra_roll_cb)
+		ra->ra_roll_cb(ra, ra->ra_curri, ra->ra_opaque);
+
 	/* Set up new current period */
 	rd_avg_period_next(ra, now);
 }

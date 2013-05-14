@@ -98,9 +98,24 @@ typedef struct rd_avg_s {
 	} ra_u;
 
 	struct rd_avg_s  *ra_parent;
+
+	void (*ra_roll_cb) (struct rd_avg_s *ra, int period, void *opaque);
+	void *ra_opaque;
 } rd_avg_t;
 
 
+/**
+ * Optional application callback that is called whenever a period
+ * is rolled over and a new period is started.
+ * 'period' argument is the index of the rolled period.
+ */
+#define rd_avg_roll_callback_set(ra,cb) ((ra)->ra_roll_cb) = (cb)
+
+
+/**
+ * Sets opaque provided in avg callbacks.
+ */
+#define rd_avg_opaque_set(ra,cb) ((ra)->ra_opaque) = (opaque)
 
 
 #define RD_AVG_CURR  -1  /* current period */
