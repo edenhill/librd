@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <syslog.h>
+
 void rdputs0 (const char *file, const char *func, int line,
 	      const char *fmt, ...)
 	__attribute__((format (printf, 4, 5)));
