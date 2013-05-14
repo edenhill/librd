@@ -29,7 +29,8 @@
 #include "rd.h"
 #include "rdtimer.h"
 #include "rdlog.h"
-
+#include "rdstring.h"
+#include "rdalert.h"
 
 rd_mutex_t rd_timers_lock = RD_MUTEX_INITIALIZER;
 static rd_cond_t  rd_timers_cond;
@@ -201,13 +202,19 @@ static void *rd_timers_run (void *arg) {
 
 			if (rt->rt_called > 10 &&
 			    !(rt->rt_called % 10)) {
-				/* More than 10 events are already
+				/* More than X events and 15s are already
 				 * enqueued for this timer. The thread
-				 * is probably stalled, so print a warning. */
-				rdbg("WARNING: Timer %p has %i events enqueued "
-				     "on thread \"%s\" (%p): thread stalled?",
-				     rt, rt->rt_called, rt->rt_thread->rdt_name,
-				     rt->rt_thread);
+				 * is probably stalled. */
+				rd_alert(RD_ALERT_THREAD_STALL, LOG_WARNING,
+					 rd_tsprintf("Timer %p has %i events "
+						     "enqueued on thread \"%s\""
+						     "(%p): thread stalled?",
+						     rt, rt->rt_called,
+						     rt->rt_thread->rdt_name,
+						     rt->rt_thread),
+					 rt->rt_thread,
+					 (rt->rt_called * rt->rt_interval) /
+					 1000);
 			}
 
 			/* Indicate with called counter that we're in
