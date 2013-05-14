@@ -34,7 +34,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdarg.h>
 
+static char rd_opt_description[2048] = "";
+
+void rd_opt_description_set (const char *fmt, ...) {
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(rd_opt_description, sizeof(rd_opt_description), fmt, ap);
+	va_end(ap);
+}
 
 static const char *rd_opt_syntaxname (const rd_opt_t *ro) {
 	static char ret[128][4];
@@ -317,10 +327,11 @@ void rd_opt_usage (const rd_opt_t *ros, FILE *fp,
 
 	fprintf(fp, 
 		"Usage: %s [options]%s%s\n"
-		"\n"
+		"%s\n"
 		"Options:\n",
 		argv0, extra_args ? " " : "",
-		extra_args ? : "");
+		extra_args ? : "",
+		rd_opt_description);
 
 	for (ro = ros ; !BIT_TEST(ro->ro_type, RD_OPT_END) ; ro++) {
 		char buf[40];

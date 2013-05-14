@@ -121,6 +121,12 @@ int rd_opt_get (const rd_opt_t *ros,
 void rd_opt_usage (const rd_opt_t *ros, FILE *fp,
 		   const char *argv0, const char *extra_args);
 
+/**
+ * Sets an optional description string that is printed with the usage
+ * message, after the command line syntax and before the option definition.
+ */
+void rd_opt_description_set (const char *fmt, ...);
+
 
 /**
  * Standard parser that assigns the value to the specified pointer
