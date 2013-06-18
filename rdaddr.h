@@ -57,6 +57,9 @@ typedef union {
 		(sinx)->in6.sin6_port = port;			\
  } while (0)
 
+#define RD_SOCKADDR_INX_CMP(a,b)				\
+	(!(RD_SOCKADDR_INX_LEN(a) == RD_SOCKADDR_INX_LEN(b) &&	\
+	   !memcmp((a), (b), RD_SOCKADDR_INX_LEN(a))))
 
 
 /**
