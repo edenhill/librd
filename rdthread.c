@@ -59,6 +59,9 @@ int rd_thread_poll (int timeout_ms) {
 		rd_fifoq_elm_release(&rd_currthread->rdt_eventq, rfqe);
 
 		cnt++;
+
+		if (unlikely(rd_currthread->rdt_state == RD_THREAD_S_EXITING))
+			break;
 	}
 
 	return cnt;
