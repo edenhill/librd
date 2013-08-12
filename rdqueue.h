@@ -104,6 +104,7 @@ rd_fifoq_elm_t *rd_fifoq_pop0 (rd_fifoq_t *rfq, int no_wait, int timeout_ms);
 
 static inline void rd_fifoq_elm_release0 (rd_fifoq_t *rfq,
 					  rd_fifoq_elm_t *rfqe) {
+	(void)rfq;
 	if (rd_atomic_sub(&rfqe->rfqe_refcnt, 1) > 0)
 		return;
 
