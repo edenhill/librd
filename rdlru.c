@@ -31,6 +31,8 @@
 
 
 static void rd_lru_elm_destroy (rd_lru_t *rlru, rd_lru_elm_t *rlrue) {
+	assert(rlru->rlru_cnt > 0);
+	rlru->rlru_cnt--;
 	if (rlru)
 		TAILQ_REMOVE(&rlru->rlru_elms, rlrue, rlrue_link);
 	free(rlrue);

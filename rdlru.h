@@ -81,3 +81,8 @@ void *rd_lru_pop (rd_lru_t *rlru);
  * Returns and removes the youngest entry in the LRU, or NULL.
  */
 void *rd_lru_shift (rd_lru_t *rlru);
+
+/**
+ * Returns the number of entries in the LRU
+ */
+#define rd_lru_cnt(rlru) ((rlru)->rlru_cnt)
