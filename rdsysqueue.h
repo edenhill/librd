@@ -286,7 +286,7 @@ for((var) = SIMPLEQ_FIRST(head);				        \
 #endif
 
 #ifndef SIMPLEQ_FOREACH_SAFE
-#define SIMPLEQ_FOREACH_SAFE(elm,tmpelm,head,field)   \
+#define SIMPLEQ_FOREACH_SAFE(elm,head,field,tmpelm)   \
 for ((elm) = SIMPLEQ_FIRST(head) ;                    \
 (elm) && ((tmpelm) = SIMPLEQ_NEXT((elm), field), 1) ; \
 (elm) = (tmpelm))
