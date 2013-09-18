@@ -285,6 +285,13 @@ for((var) = SIMPLEQ_FIRST(head);				        \
 (var) = SIMPLEQ_NEXT(var, field))
 #endif
 
+#ifndef SIMPLEQ_FOREACH_SAFE
+#define SIMPLEQ_FOREACH_SAFE(elm,head,field,tmpelm)   \
+for ((elm) = SIMPLEQ_FIRST(head) ;                    \
+(elm) && ((tmpelm) = SIMPLEQ_NEXT((elm), field), 1) ; \
+(elm) = (tmpelm))
+#endif
+
 #ifndef SIMPLEQ_INSERT_AFTER
 #define SIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
 if (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)        \
