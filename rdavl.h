@@ -207,8 +207,10 @@ static void *rd_avl_insert (rd_avl_t *ravl, void *elm,
 			    rd_avl_node_t *ran) {
 	rd_avl_node_t *existing = NULL;
 
-	rd_avl_wrlock(ravl);
+	memset(ran, 0, sizeof(*ran));
 	ran->ran_elm = elm;
+
+	rd_avl_wrlock(ravl);
 	ravl->ravl_root = rd_avl_insert_node(ravl, ravl->ravl_root,
 					     ran, &existing);
 	rd_avl_unlock(ravl);
