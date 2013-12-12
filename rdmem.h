@@ -196,8 +196,14 @@ size_t rd_memctx_freeall (rd_memctx_t *rmc);
 	} while (0)
 void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...);
 
-
-
+static inline char * rd_memctx_strdup(rd_memctx_t *memctx,const char *src)
+{
+	const size_t len = strlen(src);
+	char * dst = rd_memctx_malloc(memctx,len+1);
+	if(likely(dst!=NULL))
+		memcpy(dst,src,len+1);
+	return dst;
+}
 
 
 
