@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #define BIT_SET(f,b)    ((f) |= (b))
 #define BIT_RESET(f,b)  ((f) &= ~(b))
 #define BIT_TEST(f,b)   ((f) & (b))
