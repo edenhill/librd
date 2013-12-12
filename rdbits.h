@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <stdint.h> // Needed for uint*_t
+
 #define BIT_SET(f,b)    ((f) |= (b))
 #define BIT_RESET(f,b)  ((f) &= ~(b))
 #define BIT_TEST(f,b)   ((f) & (b))
