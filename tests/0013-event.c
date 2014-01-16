@@ -111,7 +111,7 @@ static int test_event_func_call (void) {
 			     (void *)0x11111111, (void *)0x22222222,
 			     (void *)0x33333333, (void *)0x44444444);
 
-	while (calltrace != 0b11111)
+	while (calltrace != 0x1f)
 		rd_thread_poll(100);
 
 	fails += callfails;

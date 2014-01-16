@@ -70,7 +70,7 @@ static int rd_io_thread_started;
 static rd_lru_t rd_io_worker_lru = RD_LRU_INITIALIZER(rd_io_worker_lru);
 static int      rd_io_worker_cnt;
 
-#define rd_io_hnd_keep(rioh)  rd_atomic_add(&(rioh)->rioh_refcnt, 1)
+#define rd_io_hnd_keep(rioh)  (void)rd_atomic_add(&(rioh)->rioh_refcnt, 1)
 
 static void rd_io_hnd_destroy (rd_io_hnd_t *rioh) {
 
@@ -300,7 +300,7 @@ int rd_io_add (int fd, int events, int flags, rd_thread_t *target_thread,
 
 	if (rd_atomic_add(&rd_io_thread_started, 1) == 1) {
 		if (rd_io_thread_start() == -1) {
-			rd_atomic_sub(&rd_io_thread_started, 1);
+			(void)rd_atomic_sub(&rd_io_thread_started, 1);
 			rd_io_hnd_destroy(rioh); /* from .._get() */
 			return -1;
 		}
