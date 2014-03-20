@@ -90,6 +90,8 @@ rd_fifoq_t *rd_fifoq_init (rd_fifoq_t *rfq);
 			}
 		
 
+#define rd_fifoq_count(rfq) rfq->rfq_cnt
+
 void rd_fifoq_set_max_size (rd_fifoq_t *rfq, int max_size, int taildrop);
 
 void rd_fifoq_add0 (rd_fifoq_t *rfq, void *ptr, void **ptr_purged);
