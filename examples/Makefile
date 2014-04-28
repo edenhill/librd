@@ -8,6 +8,8 @@ LDFLAGS += -lpthread -lrt -lz
 #CFLAGS += -O0 -pg
 #LDFLAGS += -pg
 
+.PHONY: all clean
+
 all:
 	@echo "# Examples are built individually"
 	@echo " make rdvarint"
