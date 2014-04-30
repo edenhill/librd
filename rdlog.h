@@ -29,17 +29,24 @@
 #pragma once
 
 #include <syslog.h>
+#include <stdio.h>
 
 void rdputs0 (const char *file, const char *func, int line,
-	      const char *fmt, ...)
-	__attribute__((format (printf, 4, 5)));
+	      int severity,const char *fmt, ...)
+	__attribute__((format (printf, 5, 6)));
 
-#define rdbg(fmt...) rdputs0(__FILE__,__FUNCTION__,__LINE__,fmt)
+#define rdbg(fmt...) \
+	rdputs0(__FILE__,__FUNCTION__,__LINE__,LOG_DEBUG,fmt)
+#define rdlog(fmt...) \
+	rdputs0(__FILE__,__FUNCTION__,__LINE__,LOG_INFO,fmt)
+#define rdsevlog(severity,fmt...) \
+	rdputs0(__FILE__,__FUNCTION__,__LINE__,severity,fmt)
 
 void rd_dbg_ctx_push (const char *fmt, ...);
 void rd_dbg_ctx_pop (void);
 void rd_dbg_ctx_clear (void);
-void rd_dbg_set (int onoff);
+void rd_dbg_set_severity (int onoff);
 
+#define rd_dbg_set(onoff) rd_dbg_set_severity(onoff ? 7 : 6)
 
 void rd_hexdump (FILE *fp, const char *name, const void *ptr, size_t len);
