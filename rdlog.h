@@ -45,6 +45,6 @@ void rd_dbg_ctx_pop (void);
 void rd_dbg_ctx_clear (void);
 void rd_log_set_severity (int severity);
 
-#define rd_dbg_set(onoff) rd_dbg_set_severity(onoff ? LOG_DEBUG : LOG_INFO)
+#define rd_dbg_set(onoff) rd_log_set_severity(onoff ? LOG_DEBUG : LOG_INFO)
 
 void rd_hexdump (FILE *fp, const char *name, const void *ptr, size_t len);
