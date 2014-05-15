@@ -44,7 +44,7 @@ static __thread int rd_dbg_ctx_wanted_idx = 0;
 
 static int rd_current_severity = LOG_INFO;
 
-void rd_dbg_set_severity (int severity) {
+void rd_log_set_severity (int severity) {
 	rd_current_severity = severity;
 }
 
