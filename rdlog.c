@@ -42,10 +42,10 @@ static __thread char *rd_dbg_ctxs[RD_DBG_CTXS_MAX];
 static __thread int rd_dbg_ctx_idx = 0;
 static __thread int rd_dbg_ctx_wanted_idx = 0;
 
-static int rd_dbg_on = 0;
+static int rd_current_severity = LOG_INFO;
 
-void rd_dbg_set (int onoff) {
-	rd_dbg_on = onoff;
+void rd_dbg_set_severity (int severity) {
+	rd_current_severity = severity;
 }
 
 
@@ -81,7 +81,7 @@ void rd_dbg_ctx_clear (void) {
 
 
 void rdputs0 (const char *file, const char *func, int line,
-	      const char *fmt, ...) {
+		int severity, const char *fmt, ...) {
 	va_list ap;
 	char buf[4096];
 	int of = 0;
@@ -90,7 +90,7 @@ void rdputs0 (const char *file, const char *func, int line,
 	rd_ts_t now;
 	static __thread char thrname[16];
 
-	if (!rd_dbg_on)
+	if (severity > rd_current_severity)
 		return;
 
 	now = rd_clock();
