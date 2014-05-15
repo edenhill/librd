@@ -43,7 +43,7 @@ void rdputs0 (const char *file, const char *func, int line,
 void rd_dbg_ctx_push (const char *fmt, ...);
 void rd_dbg_ctx_pop (void);
 void rd_dbg_ctx_clear (void);
-void rd_log_set_severity (int onoff);
+void rd_log_set_severity (int severity);
 
 #define rd_dbg_set(onoff) rd_dbg_set_severity(onoff ? LOG_DEBUG : LOG_INFO)
 
