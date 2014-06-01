@@ -30,7 +30,7 @@ CFLAGS+=-g
 
 LDFLAGS+=-g
 
-.PHONY:
+.PHONY: testcontinue test libs install clean
 
 all: libs testcontinue
 
@@ -47,10 +47,10 @@ $(LIBNAME).so.$(LIBVER): $(OBJS)
 $(LIBNAME).a:	$(OBJS)
 	$(AR) rcs $@ $(OBJS)
 
-testcontinue: .PHONY
+testcontinue:
 	make -C tests $@
 
-test: .PHONY
+test:
 	make -C tests $@
 
 install:
