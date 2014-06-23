@@ -206,15 +206,12 @@ static void *rd_timers_run (void *arg) {
 				 * enqueued for this timer. The thread
 				 * is probably stalled. */
 				rd_alert(RD_ALERT_THREAD_STALL, LOG_WARNING,
-					 rd_tsprintf("Timer %p has %i events "
-						     "enqueued on thread \"%s\""
-						     "(%p): thread stalled?",
-						     rt, rt->rt_called,
-						     rt->rt_thread->rdt_name,
-						     rt->rt_thread),
-					 rt->rt_thread,
-					 (rt->rt_called * rt->rt_interval) /
-					 1000);
+					 "Timer %p has %i events "
+					 "enqueued on thread \"%s\""
+					 "(%p): thread stalled?",
+					 rt, rt->rt_called,
+					 rt->rt_thread->rdt_name,
+					 rt->rt_thread);
 			}
 
 			/* Indicate with called counter that we're in
