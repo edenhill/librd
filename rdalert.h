@@ -67,5 +67,5 @@ void rd_alert0 (const char *file, const char *func, int line,
 void rd_alert_register (rd_alert_type_t type,
 			void (*callback) (rd_alert_type_t type, int level,
 					  const char *reason, void *opaque,
-					  ...),
+					  va_list ap),
 			void *opaque);
