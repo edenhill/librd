@@ -200,6 +200,13 @@
         }							\
 } while(0)
 
+#ifndef LIST_FOREACH_SAFE
+#define LIST_FOREACH_SAFE(var, head, field, tvar)     \
+  for ((var) = LIST_FIRST((head));        \
+      (var) && ((tvar) = LIST_NEXT((var), field), 1);   \
+      (var) = (tvar))
+#endif
+
 #ifndef TAILQ_INSERT_SORTED
 #define TAILQ_INSERT_SORTED(head, elm, field, cmpfunc) do {	\
         if(TAILQ_FIRST(head) == NULL) {				\
