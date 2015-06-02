@@ -148,6 +148,75 @@ static int test_memctxs (void) {
 	
 	rd_memctx_destroy(&rmc);
 
+	/*
+	 * Test free tracked pointers
+	 */
+	rd_memctx_init(&rmc, "test3:free_track", RD_MEMCTX_F_TRACK);
+
+	/* Test allocations */
+	sum = 0;
+	for (i = 0 ; i < num ; i++) {
+		int sz = 16 + (i % 100) * 100;
+		if (i & 1)
+			ptr[i] = rd_memctx_malloc(&rmc, sz);
+		else
+			ptr[i] = rd_memctx_calloc(&rmc, 1, sz);
+		sum += sz;
+	}
+
+	/* Verify counters */
+	rd_memctx_stats(&rmc, &stats);
+	if (stats.out != num) {
+		printf("%s:%i: failed: stats.out %i != real.out %i\n",
+		       __FUNCTION__,__LINE__,
+		       stats.out, num);
+		fails++;
+	}
+
+	if (stats.bytes_out != sum) {
+		printf("%s:%i: failed: stats.bytes_out %zd != real.sum %i\n",
+		       __FUNCTION__,__LINE__,
+		       stats.bytes_out, sum);
+		fails++;
+	}
+
+	/* Test few cleanup */
+	for (i = 0 ; i < num ; i+=20) {
+		int sz = 16 + (i % 100) * 100;
+		sum -= sz;
+		rd_memctx_freesz(&rmc, ptr[i], sz);
+	}
+
+	/* Verify counters */
+	rd_memctx_stats(&rmc, &stats);
+	if (stats.out != 190) {
+		printf("%s:%i: failed: stats.out %i != 190\n",
+		       __FUNCTION__,__LINE__,
+		       stats.out);
+		fails++;
+	}
+	
+	/* Total cleanup */
+	rd_memctx_freeall(&rmc);
+
+	/* Verify counters */
+	rd_memctx_stats(&rmc, &stats);
+	if (stats.out != 0) {
+		printf("%s:%i: failed: stats.out %i != 0\n",
+		       __FUNCTION__,__LINE__,
+		       stats.out);
+		fails++;
+	}
+
+	if (stats.bytes_out != 0) {
+		printf("%s:%i: failed: stats.bytes_out %zd != 0\n",
+		       __FUNCTION__,__LINE__,
+		       stats.bytes_out);
+		fails++;
+	}
+	
+	rd_memctx_destroy(&rmc);
+
 
 	return fails;
 }
