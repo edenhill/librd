@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <math.h>
 
 /**
  * rd_deq0(a,b,prec)
