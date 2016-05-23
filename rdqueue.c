@@ -42,6 +42,8 @@ void rd_fifoq_destroy (rd_fifoq_t *rfq) {
 	}
 
 	rd_mutex_unlock(&rfq->rfq_lock);
+	rd_mutex_destroy(&rfq->rfq_lock);
+	rd_cond_destroy(&rfq->rfq_cond);
 }
 
 rd_fifoq_t *rd_fifoq_init (rd_fifoq_t *rfq) {
