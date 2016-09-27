@@ -132,7 +132,7 @@ void rdputs0 (const char *file, const char *func, int line,
 
 void rd_hexdump (FILE *fp, const char *name, const void *ptr, size_t len) {
 	const char *p = (const char *)ptr;
-	int of = 0;
+	size_t of = 0;
 
 
 	if (name)
@@ -151,7 +151,7 @@ void rd_hexdump (FILE *fp, const char *name, const void *ptr, size_t len) {
 			cof += sprintf(charen+cof, "%c",
 				      isprint(p[i]) ? p[i] : '.');
 		}
-		fprintf(fp, "%08x: %-48s %-16s\n",
+		fprintf(fp, "%08zu: %-48s %-16s\n",
 			of, hexen, charen);
 	}
 }
