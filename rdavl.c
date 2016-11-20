@@ -187,6 +187,20 @@ rd_avl_node_t *rd_avl_find_node (const rd_avl_t *ravl,
 }
 
 
+void rd_avl_foreach_node (rd_avl_node_t *ran,
+			  rd_avl_foreach_cb cb, void *opaque) {
+	if (ran->ran_p[RD_AVL_LEFT]) {
+		rd_avl_foreach_node(ran->ran_p[RD_AVL_LEFT], cb, opaque);
+	}
+
+	if (ran->ran_p[RD_AVL_RIGHT]) {
+		rd_avl_foreach_node(ran->ran_p[RD_AVL_RIGHT], cb, opaque);
+	}
+
+	cb(RD_AVL_ELM_GET_NL(ran), opaque);
+}
+
+
 
 void rd_avl_destroy (rd_avl_t *ravl) {
 	if (ravl->ravl_flags & RD_AVL_F_LOCKS)
