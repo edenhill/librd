@@ -182,6 +182,7 @@
                 (head2)->lh_first = (head1)->lh_first;                  \
                 LIST_INIT((head1));                                     \
         }                                                               \
+} while (/*CONSTCOND*/0)
 #endif
 
 #define LIST_INSERT_SORTED(head, elm, field, cmpfunc) do {	\
