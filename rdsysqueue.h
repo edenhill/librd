@@ -175,12 +175,14 @@
  * Some extra functions for LIST manipulation
  */
 
-#define LIST_MOVE(newhead, oldhead, field) do {			        \
-        if((oldhead)->lh_first) {					\
-           (oldhead)->lh_first->field.le_prev = &(newhead)->lh_first;	\
-	}								\
-        (newhead)->lh_first = (oldhead)->lh_first;			\
-} while (0) 
+#ifndef LIST_MOVE
+#define LIST_MOVE(head1, head2) do {                                    \
+        LIST_INIT((head2));                                             \
+        if (!LIST_EMPTY((head1))) {                                     \
+                (head2)->lh_first = (head1)->lh_first;                  \
+                LIST_INIT((head1));                                     \
+        }                                                               \
+#endif
 
 #define LIST_INSERT_SORTED(head, elm, field, cmpfunc) do {	\
         if(LIST_EMPTY(head)) {					\
