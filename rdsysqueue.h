@@ -133,7 +133,7 @@
  * It does not allow freeing or modifying any other element in the list,
  * at least not the next element.
  */
-#define TAILQ_FOREACH_SAFE(elm,tmpelm,head,field)			\
+#define TAILQ_FOREACH_SAFE(elm,head,field,tmpelm)			\
 	for ((elm) = TAILQ_FIRST(head) ;				\
 	     (elm) && ((tmpelm) = TAILQ_NEXT((elm), field), 1) ;	\
 	     (elm) = (tmpelm))

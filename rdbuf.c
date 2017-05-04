@@ -66,7 +66,7 @@ void rd_buf_destroy (rd_bufh_t *rbh, rd_buf_t *rb) {
 void rd_bufh_destroy (rd_bufh_t *rbh) {
 	rd_buf_t *rb, *nrb;
 
-	TAILQ_FOREACH_SAFE(rb, nrb, &rbh->rbh_bufs, rb_link)
+	TAILQ_FOREACH_SAFE(rb, &rbh->rbh_bufs, rb_link, nrb)
 		rd_buf_destroy(rbh, rb);
 
 	assert(rbh->rbh_len == 0);
