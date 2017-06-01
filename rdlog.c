@@ -95,10 +95,18 @@ void rdputs0 (const char *file, const char *func, int line,
 		return;
 
 	now = rd_clock();
-	
-	if (unlikely(!rd_currthread && !*thrname))
-		snprintf(thrname, sizeof(thrname), "thr:%x",
-			 (int)pthread_self());
+
+	if (unlikely(!rd_currthread && !*thrname)) {
+		const pthread_t tid = pthread_self();
+		char *cursor = thrname;
+		int of = sprintf(cursor, "thr:");
+
+		for (i=0; i<sizeof(tid) && of < sizeof(thrname);
+		    ++i) {
+			cursor += snprintf(cursor, sizeof(thrname), "%02x",
+					   ((uint8_t *)&tid)[i]);
+		}
+	}
 
 	of += snprintf(buf+of, sizeof(buf)-of,
 		       "|%"PRIu64".%06"PRIu64"|%s:%i|%s| ",
