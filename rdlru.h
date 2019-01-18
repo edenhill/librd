@@ -50,7 +50,7 @@ typedef struct rd_lru_s {
 
 
 #define RD_LRU_INITIALIZER(st) \
-	{ rlru_elms: TAILQ_HEAD_INITIALIZER(st.rlru_elms) }
+	{ .rlru_elms = TAILQ_HEAD_INITIALIZER(st.rlru_elms) }
 
 #define rd_lru_lock(rlru)   rd_mutex_lock(&(rlru)->rlru_lock)
 #define rd_lru_unlock(rlru) rd_mutex_unlock(&(rlru)->rlru_lock)

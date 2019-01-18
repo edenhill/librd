@@ -97,7 +97,7 @@ static int test_avl (void) {
 	fails += count_check(&ravl, 5);
 	for (e = elms ; e->e_name ; e++) {
 		struct elm *e2;
-		struct elm skel2 = { e_name: e->e_name };
+		struct elm skel2 = { .e_name = e->e_name };
 
 		if (!(e2 = RD_AVL_FIND(&ravl, e))) {
 			printf("%s:%i: RD_AVL_FIND(..\"%s\") returned NULL\n",
