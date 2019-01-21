@@ -151,7 +151,7 @@ typedef struct rd_avl_s {
  * NOTE: can't insert / delete with it, but you can use for free all nodes
  */
 #define RD_AVL_FOREACH(ran, callback, opaque) \
-	rd_avl_foreach(ravl, callback, opaque, 1);
+	rd_avl_foreach(ravl, callback, opaque, 1)
 
 /**
  * Run a function in every node of the avl tree, no lock version
@@ -159,7 +159,7 @@ typedef struct rd_avl_s {
  * NOTE: can't insert / delete with it, but you can use for free all nodes
  */
 #define RD_AVL_FOREACH_NL(ran, callback, opaque) \
-	rd_avl_foreach(ravl, callback, opaque, 0);
+	rd_avl_foreach(ravl, callback, opaque, 0)
 
 /**
  * Destroy previously initialized (by rd_avl_init()) AVL tree.
