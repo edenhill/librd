@@ -167,15 +167,16 @@ void rd_memctx_free0 (rd_memctx_t *rmc, void *ptr, size_t size) {
 		rmc->rmc_bytes_out -= size;
 	}
 
-	if (!BIT_TEST(rmc->rmc_flags, RD_MEMCTX_F_TRACK)) {
-		assert(rmc->rmc_out > 0);
-		rmc->rmc_out--;
-		free(ptr);
-	} else {
-		assert(!*"memctx_free on _F_TRACK:ed "
-		       "contexts not implemented, use rd_memctx_freeall() "
-		       "instead, if that suits your needs.");
+	assert(rmc->rmc_out > 0);
+	rmc->rmc_out--;
+	if (BIT_TEST(rmc->rmc_flags, RD_MEMCTX_F_TRACK)) {
+		rd_memctx_ptr_t *rmcp = (rd_memctx_ptr_t *)ptr - 1;
+		TAILQ_REMOVE(&rmc->rmc_ptrs, rmcp, rmcp_link);
+		ptr = rmcp;
 	}
+	
+	free(ptr);
+	
 
 	RD_MEMCTX_UNLOCK(rmc);
 }

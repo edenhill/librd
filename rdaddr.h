@@ -171,7 +171,9 @@ static const char *rd_family2str (int af) {
 		[AF_INET]      = "inet",
 		[AF_INET6]     = "inet6",
 		[AF_NETLINK]   = "netlink",
+#ifndef __linux__
 		[AF_ROUTE]     = "route",
+#endif
 		[AF_PACKET]    = "packet",
 		[AF_BLUETOOTH] = "bluetooth",
 	};

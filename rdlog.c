@@ -89,15 +89,24 @@ void rdputs0 (const char *file, const char *func, int line,
 	int r RD_UNUSED;
 	rd_ts_t now;
 	static __thread char thrname[16];
+	int printf_rc;
 
 	if (severity > rd_current_severity)
 		return;
 
 	now = rd_clock();
-	
-	if (unlikely(!rd_currthread && !*thrname))
-		snprintf(thrname, sizeof(thrname), "thr:%x",
-			 (int)pthread_self());
+
+	if (unlikely(!rd_currthread && !*thrname)) {
+		const pthread_t tid = pthread_self();
+		char *cursor = thrname;
+		int of = sprintf(cursor, "thr:");
+
+		for (i=0; i<sizeof(tid) && of < sizeof(thrname);
+		    ++i) {
+			cursor += snprintf(cursor, sizeof(thrname), "%02x",
+					   ((uint8_t *)&tid)[i]);
+		}
+	}
 
 	of += snprintf(buf+of, sizeof(buf)-of,
 		       "|%"PRIu64".%06"PRIu64"|%s:%i|%s| ",
@@ -115,10 +124,18 @@ void rdputs0 (const char *file, const char *func, int line,
 		of += snprintf(buf+of, sizeof(buf)-of, " ");
 	}
 
-	
 	va_start(ap, fmt);
-	of += vsnprintf(buf+of, sizeof(buf)-of, fmt, ap);
+	printf_rc = vsnprintf(buf+of, sizeof(buf)-of, fmt, ap);
 	va_end(ap);
+
+	if( printf_rc > sizeof(buf) - of ) {
+		// Should we log a log buffer overflow? should we care about 
+		// log overflow log overflows?
+		of = sizeof(buf)-2;
+		buf[of-1] = buf[of-2] = buf[of-3] = '.';
+	} else {
+		of += printf_rc;
+	}
 
 	buf[of++] = '\n';
 	buf[of] = '\0';

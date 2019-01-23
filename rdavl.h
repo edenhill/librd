@@ -145,7 +145,21 @@ typedef struct rd_avl_s {
  */
 #define RD_AVL_ELM_GET_NL(ran)      ((ran)->ran_elm)
 
+/**
+ * Run a function in every node of the avl tree
+ *
+ * NOTE: can't insert / delete with it, but you can use for free all nodes
+ */
+#define RD_AVL_FOREACH(ran, callback, opaque) \
+	rd_avl_foreach(ravl, callback, opaque, 1)
 
+/**
+ * Run a function in every node of the avl tree, no lock version
+ *
+ * NOTE: can't insert / delete with it, but you can use for free all nodes
+ */
+#define RD_AVL_FOREACH_NL(ran, callback, opaque) \
+	rd_avl_foreach(ravl, callback, opaque, 0)
 
 /**
  * Destroy previously initialized (by rd_avl_init()) AVL tree.
@@ -252,4 +266,22 @@ static inline void *rd_avl_find (rd_avl_t *ravl, const void *elm,
 		rd_avl_unlock(ravl);
 
 	return ret;
+}
+
+typedef void (*rd_avl_foreach_cb)(void *node, void *opaque);
+
+void rd_avl_foreach_node (rd_avl_node_t *ran,
+	rd_avl_foreach_cb cb, void *opaque);
+
+static inline void rd_avl_foreach (rd_avl_t *ravl, rd_avl_foreach_cb cb,
+		void *opaque, int dolock) RD_UNUSED;
+static inline void rd_avl_foreach (rd_avl_t *ravl, rd_avl_foreach_cb cb,
+		void *opaque, int dolock) {
+	if (dolock)
+		rd_avl_rdlock(ravl);
+
+	rd_avl_foreach_node(ravl->ravl_root, cb, opaque);
+
+	if (dolock)
+		rd_avl_unlock(ravl);
 }

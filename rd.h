@@ -40,6 +40,7 @@
 #include <alloca.h>
 #include <assert.h>
 #include <pthread.h>
+#include <endian.h>
 
 #include "rdtypes.h"
 

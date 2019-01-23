@@ -40,6 +40,38 @@ static int elm_cmp (const void *_a, const void *_b) {
 	return strcmp(a->e_name, b->e_name);
 }
 
+static void foreach_check_count(void *velm, void *opaque) {
+	struct elm *elm = velm;
+	int *count = opaque;
+	size_t i;
+	const char *expected[] = {
+		"one",
+		"two",
+		"three",
+		"four",
+		"five",
+	};
+
+	for (i = 0; i < RD_ARRAYSIZE(expected); ++i) {
+		if (0 == strcmp(expected[i], elm->e_name)) {
+			(*count)++;
+			return;
+		}
+	}
+}
+
+static int count_check(rd_avl_t *ravl, int expected_count) {
+	int count = 0;
+
+	/* Count elements with foreach */
+	RD_AVL_FOREACH(&ravl, foreach_check_count, &count);
+	if (count != expected_count) {
+		return 1;
+	}
+
+	return 0;
+}
+
 static int test_avl (void) {
 	int fails = 0;
 	struct elm elms[] = {
@@ -62,9 +94,10 @@ static int test_avl (void) {
 	}
 
 	/* Scan to see that they are now found. */
+	fails += count_check(&ravl, 5);
 	for (e = elms ; e->e_name ; e++) {
 		struct elm *e2;
-		struct elm skel2 = { e_name: e->e_name };
+		struct elm skel2 = { .e_name = e->e_name };
 
 		if (!(e2 = RD_AVL_FIND(&ravl, e))) {
 			printf("%s:%i: RD_AVL_FIND(..\"%s\") returned NULL\n",
@@ -101,6 +134,7 @@ static int test_avl (void) {
 
 
 	/* Verify that they're now gone. */
+	fails += count_check(&ravl, 4);
 	for (e = elms ; e->e_name ; e++) {
 		if (!(e2 = RD_AVL_FIND(&ravl, e))) {
 			if (e->e_expect) {
@@ -138,6 +172,7 @@ static int test_avl (void) {
 	}
 
 	/* Scan to see its correct. */
+	fails += count_check(&ravl, 4);
 	for (e = elms ; e->e_name ; e++) {
 
 		if (!(e2 = RD_AVL_FIND(&ravl, e))) {

@@ -202,6 +202,7 @@ int rd_thread_sigmask (int how, ...);
 #define rd_cond_signal(COND)    pthread_cond_signal(COND)
 #define rd_cond_timedwait(COND,MTX,TS) pthread_cond_timedwait(COND,MTX,TS)
 #define rd_cond_wait(COND,MTX) pthread_cond_wait(COND,MTX)
+#define rd_cond_destroy(COND)   pthread_cond_destroy(COND)
 
 /**
  * Wrapper for pthread_cond_timedwait() that makes it simpler to use

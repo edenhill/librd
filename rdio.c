@@ -41,7 +41,7 @@
 
 
 int rd_io_poll_single (int fd, short events, int timeout_ms) {
-	struct pollfd fds = { fd: fd, events: events };
+	struct pollfd fds = { .fd = fd, .events = events };
 	int r;
 
 	if ((r = poll(&fds, 1, timeout_ms)) <= 0)
