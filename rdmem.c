@@ -208,12 +208,12 @@ size_t rd_memctx_freeall (rd_memctx_t *rmc) {
 
 
 
-void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...) {
-	va_list ap;
+void *vrd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, va_list t_ap) {
 	size_t tot_size = base_size;
 	int pass;
 	char *tail = NULL;
 	void *ptr = NULL;
+	va_list ap;
 
 	/*
 	 * 1) Pass 1: calculate total memory size.
@@ -226,7 +226,7 @@ void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...) {
 		int elem_size;
 		void *elem_src, **elem_dst;
 
-		va_start(ap, base_size);
+		va_copy(ap, t_ap);
 		while ((elem_size = va_arg(ap, int)) != RD_MEM_END_TOKEN) {
 			elem_src = va_arg(ap, void *);
 			elem_dst = va_arg(ap, void **);

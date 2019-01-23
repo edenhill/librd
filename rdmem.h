@@ -32,6 +32,8 @@
 #include "rdqueue.h"
 #include "rdthread.h"
 
+#include <stdarg.h>
+
 /**
  * Single allocation, when RD_MEMCTX_F_TRACK is used.
  */
@@ -194,7 +196,18 @@ size_t rd_memctx_freeall (rd_memctx_t *rmc);
 		*(pptr) = NULL;						\
 		*(pptr) = rd_calloc_struct0(rmc, base_size, ARGS);	\
 	} while (0)
-void *rd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, ...);
+void *vrd_calloc_struct0 (rd_memctx_t *rmc, size_t base_size, va_list ap);
+static void *rd_calloc_struct0(rd_memctx_t *rmc, size_t base_size, ...) RD_UNUSED;
+static void *rd_calloc_struct0(rd_memctx_t *rmc, size_t base_size, ...) {
+	void *ret = NULL;
+	va_list ap;
+
+	va_start(ap, base_size);
+	ret = vrd_calloc_struct0(rmc, base_size, ap);
+	va_end(ap);
+
+	return ret;
+}
 
 
 static inline char *rd_memctx_strdup(rd_memctx_t *memctx,const char *src) RD_UNUSED;
